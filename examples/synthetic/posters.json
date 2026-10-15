@@ -1,0 +1,308 @@
+{
+ "note": "Synthetic posters. Every venue, act and offer is invented. Each item is seen on Thursday 2026-10-08 at 14:00 Madrid time unless it says otherwise. `why` says what the item tests.",
+ "items": [
+  {
+   "id": "s01",
+   "lines": [
+    "SALA FARO",
+    "Los Vecinos del Quinto",
+    "en concierto",
+    "Sábado 10 de octubre · 21:00"
+   ],
+   "bg": "#1d2a44",
+   "fg": "#ffd166",
+   "key": {
+    "event": true,
+    "day": "2026-10-10"
+   },
+   "why": "plain dated concert"
+  },
+  {
+   "id": "s02",
+   "lines": [
+    "Bar La Esquina",
+    "JAM SESSION",
+    "Todos los jueves",
+    "22:00 · entrada libre"
+   ],
+   "bg": "#2b2b2b",
+   "fg": "#f2f2f2",
+   "key": {
+    "event": true,
+    "weekdays": [
+     "thu"
+    ]
+   },
+   "why": "standing weekly plan, scored on weekdays"
+  },
+  {
+   "id": "s03",
+   "lines": [
+    "Gracias por lo de anoche!",
+    "Qué noche más bonita",
+    "Nos vemos pronto"
+   ],
+   "bg": "#5b2a86",
+   "fg": "#ffffff",
+   "key": {
+    "event": false
+   },
+   "why": "recap with nothing upcoming"
+  },
+  {
+   "id": "s04",
+   "lines": [
+    "HORARIO",
+    "Martes a domingo",
+    "12:00 – 00:00",
+    "Lunes cerrado"
+   ],
+   "bg": "#f4efe6",
+   "fg": "#333333",
+   "key": {
+    "event": false
+   },
+   "why": "opening hours, not a plan"
+  },
+  {
+   "id": "s05",
+   "lines": [
+    "Nuestra tarta de queso",
+    "hecha cada mañana"
+   ],
+   "bg": "#fff3e0",
+   "fg": "#6d4c41",
+   "key": {
+    "event": false
+   },
+   "why": "food photo with no offer or date"
+  },
+  {
+   "id": "s06",
+   "lines": [
+    "Noche de Boleros",
+    "con Trío Malva",
+    "Viernes 2 de octubre · 21:30"
+   ],
+   "bg": "#3e1f1f",
+   "fg": "#f6c28b",
+   "key": {
+    "event": false
+   },
+   "why": "poster for an event already over when seen; a model that reads the date is caught by the publish policy"
+  },
+  {
+   "id": "s07",
+   "lines": [
+    "MONÓLOGOS",
+    "Este sábado",
+    "Tres cómicos, una noche",
+    "21:00"
+   ],
+   "bg": "#102a43",
+   "fg": "#9fb3c8",
+   "publishedAt": "2026-10-07T10:00:00",
+   "key": {
+    "event": true,
+    "day": "2026-10-10"
+   },
+   "why": "relative date resolved from the publication date"
+  },
+  {
+   "id": "s08",
+   "lines": [
+    "CERRADO POR VACACIONES",
+    "del 13 al 20 de octubre",
+    "Volvemos con más ganas"
+   ],
+   "bg": "#e0f2f1",
+   "fg": "#004d40",
+   "key": {
+    "event": false
+   },
+   "why": "closure notice"
+  },
+  {
+   "id": "s09",
+   "lines": [
+    "2x1 EN CÓCTELES",
+    "Hoy de 19:00 a 21:00",
+    "Terraza Brisa"
+   ],
+   "bg": "#ff6f61",
+   "fg": "#ffffff",
+   "key": {
+    "event": true,
+    "day": "2026-10-08"
+   },
+   "why": "same-day deal"
+  },
+  {
+   "id": "s10",
+   "lines": [
+    "ÚLTIMAS ENTRADAS",
+    "Tributo a Queen",
+    "17 OCT · 22:00"
+   ],
+   "bg": "#000000",
+   "fg": "#e63946",
+   "key": {
+    "event": true,
+    "day": "2026-10-17"
+   },
+   "why": "ticket push for a future show"
+  },
+  {
+   "id": "s11",
+   "lines": [
+    "OCTUBRE EN SALA FARO",
+    "10 · Jazz con Ana Rivas",
+    "17 · Rock: Los Tábanos",
+    "24 · Flamenco: Peña Sur"
+   ],
+   "bg": "#14213d",
+   "fg": "#fca311",
+   "key": {
+    "event": true
+   },
+   "why": "programme poster: one verdict per image, day not scored"
+  },
+  {
+   "id": "s12",
+   "lines": [
+    "BUSCAMOS CAMARERO/A",
+    "Jornada completa",
+    "Envía tu CV por privado"
+   ],
+   "bg": "#ffffff",
+   "fg": "#222222",
+   "key": {
+    "event": false
+   },
+   "why": "job ad"
+  },
+  {
+   "id": "s13",
+   "lines": [
+    "MENÚ DEGUSTACIÓN",
+    "Martes y miércoles",
+    "7 pases · 35 €"
+   ],
+   "bg": "#2d3a2e",
+   "fg": "#e9d8a6",
+   "key": {
+    "event": true,
+    "weekdays": [
+     "tue",
+     "wed"
+    ]
+   },
+   "why": "recurring offer on two weekdays"
+  },
+  {
+   "id": "s14",
+   "lines": [
+    "FÚTBOL EN PANTALLA GIGANTE",
+    "Domingo 11 · 18:30",
+    "Cubos de cerveza 10 €"
+   ],
+   "bg": "#1b5e20",
+   "fg": "#ffffff",
+   "key": {
+    "event": true,
+    "day": "2026-10-11"
+   },
+   "why": "screening with a date"
+  },
+  {
+   "id": "s15",
+   "lines": [
+    "TALLER INFANTIL",
+    "Pinta tu calabaza",
+    "Sábado 10 · 11:00",
+    "De 4 a 10 años"
+   ],
+   "bg": "#ffb703",
+   "fg": "#023047",
+   "key": {
+    "event": true,
+    "day": "2026-10-10"
+   },
+   "why": "family plan, still an event"
+  },
+  {
+   "id": "s16",
+   "lines": [
+    "5 AÑOS CONTIGO",
+    "Gracias a todos",
+    "los que hacéis esto posible"
+   ],
+   "bg": "#8ecae6",
+   "fg": "#023047",
+   "key": {
+    "event": false
+   },
+   "why": "anniversary thank-you with no plan"
+  },
+  {
+   "id": "s17",
+   "lines": [
+    "LIVE DJ",
+    "Friday 9 Oct",
+    "23:00 till late"
+   ],
+   "bg": "#240046",
+   "fg": "#c77dff",
+   "key": {
+    "event": true,
+    "day": "2026-10-09"
+   },
+   "why": "date written in English"
+  },
+  {
+   "id": "s18",
+   "lines": [
+    "MAÑANA",
+    "Karaoke",
+    "desde las 22:00"
+   ],
+   "bg": "#3a0ca3",
+   "fg": "#f72585",
+   "publishedAt": "2026-10-08T09:00:00",
+   "key": {
+    "event": true,
+    "day": "2026-10-09"
+   },
+   "why": "'tomorrow' resolved from the publication date"
+  },
+  {
+   "id": "s19",
+   "lines": [
+    "NUEVA CARTA",
+    "de vinos",
+    "Ven a probarla"
+   ],
+   "bg": "#4a0e0e",
+   "fg": "#f1e3d3",
+   "key": {
+    "event": false
+   },
+   "why": "new menu with no date or offer"
+  },
+  {
+   "id": "s20",
+   "lines": [
+    "Esta noche lo petamos",
+    "Gracias por venir",
+    "Siguiente: domingo 18 · Cumbia Club"
+   ],
+   "bg": "#0b090a",
+   "fg": "#f5f3f4",
+   "key": {
+    "event": true,
+    "day": "2026-10-18"
+   },
+   "why": "recap that announces the next date: an event"
+  }
+ ]
+}
