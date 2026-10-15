@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { dropEnded, normWeekdays, score, verdictOf, type Answer, type Item, type KeyEntry } from "../score.js";
+import { dropEnded, majority, normWeekdays, parseTime, score, verdictOf, type Answer, type Item, type KeyEntry } from "../score.js";
 
 const SEEN = "2026-10-09T14:00:00";
 const seen = new Date(SEEN);
@@ -70,7 +70,7 @@ describe("score", () => {
 		expect(r.score).toMatchObject({ falseAlarms: 1, policyCaught: 0 });
 	});
 
-	it("checks the day exactly, only on hits", () => {
+	it("checks the day exactly, only on found events", () => {
 		const items = ["a", "b", "c"].map(item);
 		const k = { a: key(true, { day: "2026-10-10" }), b: key(true, { day: "2026-10-11" }), c: key(false) };
 		const r = score(items, k, [ev("a", ...FUTURE), ev("b", ...FUTURE), ev("c", ...FUTURE)]);
@@ -99,5 +99,47 @@ describe("normWeekdays", () => {
 	it("returns null for no pattern", () => {
 		expect(normWeekdays(null)).toBeNull();
 		expect(normWeekdays([])).toBeNull();
+	});
+});
+
+describe("fields across runs", () => {
+	it("takes the day most event runs gave, and none on a tie", () => {
+		const a = (start: string, run: number) => ev("a", start, "2026-10-12 23:59", run);
+		expect(verdictOf([a("2026-10-10 21:00", 0), a("2026-10-11 21:00", 1), a("2026-10-10 22:00", 2)], seen, dropEnded).day).toBe("2026-10-10");
+		expect(verdictOf([a("2026-10-10 21:00", 0), a("2026-10-11 21:00", 1)], seen, dropEnded).day).toBeNull();
+	});
+
+	it("needs a strict majority", () => {
+		expect(majority(["x", "y", "x"])).toBe("x");
+		expect(majority(["x", null])).toBeNull();
+	});
+
+	it("counts a found event with no day as a wrong day when the key has one", () => {
+		const r = score([item("a")], { a: key(true, { day: "2026-10-10" }) }, [{ id: "a", run: 0, event: true, start: null, end: null }]);
+		expect(r.score).toMatchObject({ dayChecked: 1, dayRight: 0 });
+		expect(r.results[0]?.dayRight).toBe(false);
+	});
+});
+
+describe("malformed input", () => {
+	it("treats an answer with no event field as an error, not a rejection", () => {
+		const r = score([item("a")], { a: key(false) }, [{ id: "a", run: 0 }]);
+		expect(r.score).toMatchObject({ errors: 1 });
+	});
+
+	it("rejects two answers for the same item and run", () => {
+		expect(() => score([item("a")], { a: key(true) }, [no("a"), no("a")])).toThrow(/duplicate/);
+	});
+});
+
+describe("time parsing", () => {
+	it("reads a time with no offset as wall-clock time, the same on every machine", () => {
+		expect(parseTime("2026-10-09 21:30")?.toISOString()).toBe("2026-10-09T21:30:00.000Z");
+		expect(parseTime("2026-10-09T21:30")?.toISOString()).toBe("2026-10-09T21:30:00.000Z");
+		expect(parseTime("2026-10-09")?.toISOString()).toBe("2026-10-09T00:00:00.000Z");
+	});
+
+	it("keeps an explicit offset", () => {
+		expect(parseTime("2026-10-09T21:30:00+02:00")?.toISOString()).toBe("2026-10-09T19:30:00.000Z");
 	});
 });
