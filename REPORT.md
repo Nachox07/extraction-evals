@@ -18,8 +18,7 @@ and how do we know?
 
 The private runs used public venue posts, not in this repo.
 
-- 400 images seen between 3 and 12 October 2026: 329 story frames and 71 feed
-  posts, from 70 venues in four cities.
+- 400 images seen between 3 and 12 October 2026, from 70 venues in four cities.
 - 300 drawn at random from the 795 usable images collected in that window, so
   the mix matches what the pipeline saw in those ten days and nothing wider.
   Then 100 "hard" items from the rest: quotas for the categories that cause
@@ -27,8 +26,8 @@ The private runs used public venue posts, not in this repo.
   and dish photos, dates far ahead with no year, events already over, giveaways,
   job calls, cancellations), filled up with items where models disagreed.
 - 92 of the 400 are events under the key, from 28 venues. That is the
-  denominator for misses. Images are scored independently, and story frames can
-  repeat a venue's plan, so the number of distinct events is somewhat lower and
+  denominator for misses. Images are scored independently, and a venue often posts
+  the same plan more than once, so the number of distinct events is somewhat lower and
   was not counted.
 
 The random and hard sets are reported together below. They are also scored
@@ -109,7 +108,7 @@ an event on the wrong night.
 - **`all` was rejected**, although it has the fewest false alarms. It doubled the
   misses. Two of its six misses are shared with the baseline. The four new ones:
   two children's shows (dropped by the audience rule), a "last weekend of the
-  season" story (dropped by the first recap wording), and a borderline news post
+  season" post (dropped by the first recap wording), and a borderline news post
   about a charity event, which `ab` also misses. The owner decided family plans
   stay, and the shipped recap wording says a continuing run is still an event.
 - **The publish rule carries real weight.** At the read level the production
@@ -128,7 +127,7 @@ an event on the wrong night.
   baseline missed two real events in one run and caught them in the other. The
   false-alarm drop is all in the hard slice. The decision is a rule on counts,
   stated before looking, not a significance claim, and it is in-sample (above).
-- **Production rates.** 400 images over ten days, from the accounts followed then,
+- **Production rates.** 400 images over ten days, from the venues followed then,
   in a few cities. The random slice matches that mix and nothing wider.
 - **Anything about other models.** A ten-model comparison on an earlier 150-image
   set exists and is not published. Its key was partly built from the production
