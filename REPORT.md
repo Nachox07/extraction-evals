@@ -123,8 +123,7 @@ an event on the wrong night.
 ## Held-out check: the gain does not replicate
 
 331 images seen on 14 and 15 October, after `ab` shipped, from the same 70
-venues (210 short-lived frames, 121 regular posts; a different mix from the
-main set). Same method: the reference model twice for the key, the production
+venues. Same method: the reference model twice for the key, the production
 model twice with each prompt. `without-ab` is today's prompt with the two `ab`
 lines removed.
 
