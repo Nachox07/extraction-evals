@@ -1,0 +1,78 @@
+{
+ "s01": {
+  "event": true,
+  "day": "2026-10-10"
+ },
+ "s02": {
+  "event": true,
+  "weekdays": [
+   "thu"
+  ]
+ },
+ "s03": {
+  "event": false
+ },
+ "s04": {
+  "event": false
+ },
+ "s05": {
+  "event": false
+ },
+ "s06": {
+  "event": false
+ },
+ "s07": {
+  "event": true,
+  "day": "2026-10-10"
+ },
+ "s08": {
+  "event": false
+ },
+ "s09": {
+  "event": true,
+  "day": "2026-10-08"
+ },
+ "s10": {
+  "event": true,
+  "day": "2026-10-17"
+ },
+ "s11": {
+  "event": true
+ },
+ "s12": {
+  "event": false
+ },
+ "s13": {
+  "event": true,
+  "weekdays": [
+   "tue",
+   "wed"
+  ]
+ },
+ "s14": {
+  "event": true,
+  "day": "2026-10-11"
+ },
+ "s15": {
+  "event": true,
+  "day": "2026-10-10"
+ },
+ "s16": {
+  "event": false
+ },
+ "s17": {
+  "event": true,
+  "day": "2026-10-09"
+ },
+ "s18": {
+  "event": true,
+  "day": "2026-10-09"
+ },
+ "s19": {
+  "event": false
+ },
+ "s20": {
+  "event": true,
+  "day": "2026-10-18"
+ }
+}

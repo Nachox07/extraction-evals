@@ -1,0 +1,29 @@
+{
+  "name": "extraction-evals",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Scoring harness for vision-model event extraction: misses and false alarms apart, errors in the denominator, read and publish levels.",
+  "license": "MIT",
+  "author": "Nacho González-Garilleti",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "score": "tsx src/cli.ts",
+    "posters": "tsx scripts/make-posters.ts",
+    "run-model": "tsx scripts/run-model.ts"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "sharp": "^0.33.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.8"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.135.0"
+  }
+}

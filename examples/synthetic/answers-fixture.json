@@ -1,0 +1,26 @@
+{
+ "label": "hand-written fixture (not a model)",
+ "note": "Written by hand to show every outcome the scorer reports. It is not the output of any model.",
+ "answers": [
+  { "id": "s01", "run": 0, "event": true, "start": "2026-10-10 21:00", "end": "2026-10-10 23:59" },
+  { "id": "s02", "run": 0, "event": true, "start": "2026-10-08 22:00", "end": null, "weekdays": ["thu"] },
+  { "id": "s03", "run": 0, "event": false },
+  { "id": "s04", "run": 0, "event": true, "start": "2026-10-08 12:00", "end": "2026-10-08 23:59" },
+  { "id": "s05", "run": 0, "event": false },
+  { "id": "s06", "run": 0, "event": true, "start": "2026-10-02 21:30", "end": "2026-10-02 23:59" },
+  { "id": "s07", "run": 0, "event": true, "start": "2026-10-17 21:00", "end": "2026-10-17 23:59" },
+  { "id": "s08", "run": 0, "event": false },
+  { "id": "s09", "run": 0, "event": true, "start": "2026-10-08 19:00", "end": "2026-10-08 21:00" },
+  { "id": "s10", "run": 0, "event": true, "start": "2026-10-17 22:00", "end": "2026-10-17 23:59" },
+  { "id": "s11", "run": 0, "event": true, "start": "2026-10-10 21:00", "end": "2026-10-24 23:59" },
+  { "id": "s12", "run": 0, "error": "request timed out" },
+  { "id": "s13", "run": 0, "event": true, "start": "2026-10-14 13:00", "end": null, "weekdays": ["tue"] },
+  { "id": "s14", "run": 0, "event": true, "start": "2026-10-11 18:30", "end": "2026-10-11 21:00" },
+  { "id": "s15", "run": 0, "event": false },
+  { "id": "s16", "run": 0, "event": false },
+  { "id": "s17", "run": 0, "event": true, "start": "2026-10-09 23:00", "end": "2026-10-10 04:00" },
+  { "id": "s18", "run": 0, "event": true, "start": "2026-10-09 22:00", "end": "2026-10-07 23:59" },
+  { "id": "s19", "run": 0, "event": false },
+  { "id": "s20", "run": 0, "event": true, "start": "2026-10-18 22:00", "end": "2026-10-18 23:59" }
+ ]
+}
