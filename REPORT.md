@@ -26,8 +26,8 @@ The private runs used public venue posts, not in this repo.
   and dish photos, dates far ahead with no year, events already over, giveaways,
   job calls, cancellations), filled up with items where models disagreed.
 - 92 of the 400 are events under the key, from 28 venues. That is the
-  denominator for misses. Images are scored independently, and posts can
-  repeat a venue's plan, so the number of distinct events is somewhat lower and
+  denominator for misses. Images are scored independently, and a venue often posts
+  the same plan more than once, so the number of distinct events is somewhat lower and
   was not counted.
 
 The random and hard sets are reported together below. They are also scored
@@ -127,7 +127,7 @@ an event on the wrong night.
   baseline missed two real events in one run and caught them in the other. The
   false-alarm drop is all in the hard slice. The decision is a rule on counts,
   stated before looking, not a significance claim, and it is in-sample (above).
-- **Production rates.** 400 images over ten days, from the venues covered then,
+- **Production rates.** 400 images over ten days, from the venues followed then,
   in a few cities. The random slice matches that mix and nothing wider.
 - **Anything about other models.** A ten-model comparison on an earlier 150-image
   set exists and is not published. Its key was partly built from the production
