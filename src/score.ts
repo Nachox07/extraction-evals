@@ -6,11 +6,16 @@
  *  - an item whose runs all errored (or that has no answer) is an error, and stays in
  *    the denominator;
  *  - misses and false alarms are separate counts, never folded into one accuracy;
- *  - two levels. Read: did the model read the image right, no policy applied.
+ *  - two levels. Read: the model's answers as given, no policy applied.
  *    Publish: the same answers after the caller's publish policy (by default, an
  *    event whose end is before the time the item was seen is dropped);
- *  - a non-event the model read as an event that the policy then removed is a
- *    "policy-caught read": neither a hit nor a published false alarm.
+ *  - the key is a publishability key: a poster of an event already over is "not an
+ *    event". A model that reads it as an event and the policy then removes is
+ *    "caught by policy": neither a found event nor a published false alarm;
+ *  - day and weekdays are scored apart from detection, on every found event the key
+ *    dates; a missing day counts as wrong;
+ *  - all times are the venue's local wall-clock time. A time with no offset is read
+ *    as that wall-clock time on every machine, never in the machine's own zone.
  */
 
 export interface Item {
@@ -44,9 +49,14 @@ export interface Answer {
 /** Returns true when the answer would not be published. */
 export type PublishPolicy = (answer: Answer, seenAt: Date) => boolean;
 
+const NAIVE = /^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}(:\d{2})?)?$/;
+
+/** Parses "YYYY-MM-DD[ HH:MM[:SS]]" as wall-clock time (held in UTC so it is machine-independent), or an ISO string with an offset. */
 export function parseTime(s: string | null | undefined): Date | null {
 	if (!s) return null;
-	const d = new Date(s.includes("T") ? s : s.replace(" ", "T"));
+	const t = s.trim();
+	const iso = NAIVE.test(t) ? `${t.replace(" ", "T")}${t.length === 10 ? "T00:00" : ""}Z` : t;
+	const d = new Date(iso);
 	return Number.isNaN(d.getTime()) ? null : d;
 }
 
@@ -73,7 +83,7 @@ export function normWeekdays(w: string[] | null | undefined): string[] | null {
 }
 
 export function viewAnswer(a: Answer, seenAt: Date, policy: PublishPolicy): RunView {
-	if (a.error) return { status: "error", removedByPolicy: false, day: null, weekdays: null };
+	if (a.error || typeof a.event !== "boolean") return { status: "error", removedByPolicy: false, day: null, weekdays: null };
 	if (!a.event) return { status: "not-event", removedByPolicy: false, day: null, weekdays: null };
 	if (policy(a, seenAt)) return { status: "not-event", removedByPolicy: true, day: null, weekdays: null };
 	return {
@@ -100,9 +110,17 @@ export function verdictOf(answers: Answer[], seenAt: Date, policy: PublishPolicy
 	return {
 		status: isEvent ? "event" : "not-event",
 		flipped: events.length > 0 && events.length < answered.length,
-		day: isEvent ? events.find(v => v.day)?.day ?? null : null,
-		weekdays: isEvent ? events.find(v => v.weekdays)?.weekdays ?? null : null,
+		day: isEvent ? majority(events.map(v => v.day)) : null,
+		weekdays: isEvent ? majority(events.map(v => v.weekdays?.join() ?? null))?.split(",") ?? null : null,
 	};
+}
+
+/** The value a strict majority of the event runs gave; null on a tie or when most gave none. */
+export function majority(values: (string | null)[]): string | null {
+	const counts = new Map<string, number>();
+	for (const v of values) if (v !== null) counts.set(v, (counts.get(v) ?? 0) + 1);
+	for (const [v, n] of counts) if (n * 2 > values.length) return v;
+	return null;
 }
 
 export interface Score {
@@ -126,14 +144,20 @@ export interface ItemResult {
 	key: KeyEntry;
 	read: Verdict;
 	publish: Verdict;
-	outcome: "hit" | "correct-reject" | "miss" | "publish-miss" | "false-alarm" | "policy-caught" | "error";
+	outcome: "found" | "correct-reject" | "miss" | "publish-miss" | "false-alarm" | "policy-caught" | "error";
 	dayRight: boolean | null;
 }
 
 /** Score answers against a key. Items with no key entry are skipped. */
 export function score(items: Item[], key: Record<string, KeyEntry>, answers: Answer[], policy: PublishPolicy = dropEnded): { score: Score; results: ItemResult[] } {
 	const byId = new Map<string, Answer[]>();
-	for (const a of answers) byId.set(a.id, [...(byId.get(a.id) ?? []), a]);
+	const seenRuns = new Set<string>();
+	for (const a of answers) {
+		const k = `${a.id}\u0000${a.run}`;
+		if (seenRuns.has(k)) throw new Error(`duplicate answer for item ${a.id} run ${a.run}`);
+		seenRuns.add(k);
+		byId.set(a.id, [...(byId.get(a.id) ?? []), a]);
+	}
 	const s: Score = { items: 0, keyEvents: 0, errors: 0, readMisses: 0, publishMisses: 0, falseAlarms: 0, policyCaught: 0, dayChecked: 0, dayRight: 0, weekdaysChecked: 0, weekdaysRight: 0, multiRun: 0, flips: 0 };
 	const results: ItemResult[] = [];
 	for (const item of items) {
@@ -154,17 +178,17 @@ export function score(items: Item[], key: Record<string, KeyEntry>, answers: Ans
 		} else {
 			if (rows.filter(r => !r.error).length > 1) {
 				s.multiRun++;
-				if (read.flipped) s.flips++;
+				if (read.flipped) s.flips++; // flips are counted on the raw answers, before the policy
 			}
 			if (k.event) {
 				if (read.status === "not-event") { s.readMisses++; s.publishMisses++; outcome = "miss"; }
 				else if (pub.status === "not-event") { s.publishMisses++; outcome = "publish-miss"; }
-				else outcome = "hit";
+				else outcome = "found";
 			} else if (pub.status === "event") { s.falseAlarms++; outcome = "false-alarm"; }
 			else if (read.status === "event") { s.policyCaught++; outcome = "policy-caught"; }
 			else outcome = "correct-reject";
-			if (outcome === "hit") {
-				if (k.day && pub.day) {
+			if (outcome === "found") {
+				if (k.day) {
 					s.dayChecked++;
 					dayRight = k.day === pub.day;
 					if (dayRight) s.dayRight++;

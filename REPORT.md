@@ -1,8 +1,8 @@
 # Report: measuring a prompt change on a production extraction pipeline
 
 **Status: draft.** Six disputed items still wait on an owner answer, and the
-owner's blind audit of 20 agreements is not done. The numbers below can move by
-one or two when those land.
+owner's blind audit of 20 agreements is not done. Any count below can change by
+up to the number of those items it touches when they land.
 
 ## The system
 
@@ -34,7 +34,9 @@ apart, and the hard set is never used to make claims about production rates.
 
 A key built from the model under test grades that model against itself. So:
 
-1. A stronger model (Claude Opus 5.5, high effort) answered every item twice.
+1. A reference model (Claude Opus 5.5, high effort) answered every item twice.
+   It was chosen because it is not the model under test and it is the largest
+   model from the same vendor; the steps below check it rather than trust it.
    The production publish rule was applied to its answers too.
 2. Items where its two runs disagreed, where it disagreed with the production
    model, where the two picked different days, or where two cheap models both
@@ -58,28 +60,41 @@ labelling the 20 agreements blind, without seeing any model's answer.
 
 The production model (Claude Sonnet 5.5, medium effort) with three prompts.
 Two runs per item. Read and publish levels are defined in `docs/hit-rule.md`.
+All 400 items:
 
 | Prompt | Misses | False alarms (published) | Caught by policy | Day right | Items that flipped |
 |---|---|---|---|---|---|
-| Baseline | 3 | 8 | 9 | 86 of 88 | 3 |
-| `ab`: food-photo rule + recap rule (shipped) | 2 | 5 | 9 | 88 of 90 | 2 |
+| Baseline | 3 | 8 | 9 | 84 of 88 | 3 |
+| `ab`: food-photo rule + recap rule (shipped) | 2 | 5 | 9 | 87 of 90 | 2 |
 | `all`: first recap wording + audience rule | 6 | 2 | 8 | 83 of 86 | 0 |
+
+By slice, misses / false alarms:
+
+| Prompt | Random (300, 51 events) | Hard (100, 41 events) |
+|---|---|---|
+| Baseline | 2 / 4 | 1 / 4 |
+| `ab` | 1 / 4 | 1 / 1 |
+| `all` | 3 / 1 | 3 / 1 |
+
+`ab` is no worse than the baseline on either slice. Its false-alarm gain is all
+in the hard slice. On the random slice it has one miss fewer and the same false alarms.
 
 No run errored. Misses are the same at the read and publish levels for every
 prompt: the publish rule never threw away a real event because of a wrong end date.
 
 ## What the numbers say
 
-- **`ab` was shipped.** It meets the acceptance rule: no more misses than the
-  baseline (2 against 3) and fewer false alarms (5 against 8).
+- **`ab` was shipped.** It meets the acceptance rule on the pooled counts: no
+  more misses than the baseline (2 against 3) and fewer false alarms (5 against 8).
 - **`all` was rejected**, although it has the fewest false alarms. It doubled the
   misses. Reading them showed why: the audience rule dropped two children's shows,
   and the first recap wording dropped "one more weekend" and "last tickets"
   stories. The owner decided family plans stay. The shipped wording says those
   stories are still events.
 - **The publish rule carries real weight.** At the read level the production
-  model calls 8 or 9 posters of events already over "an event", with the correct
-  past date. The rule that drops ended events removes all of them. The reference
+  model calls 8 or 9 posters of events already over "an event", with an end date
+  before the moment the post was seen. The rule that drops ended events removes
+  all of them. The reference
   model rejects these while reading, so it gets 0 here. That gap is invisible
   with only one score, and it means the date check must never be removed on the
   theory that the prompt handles it.

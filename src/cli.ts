@@ -47,7 +47,7 @@ for (const f of answerFiles) {
 			"weekdays right": pct(s.weekdaysRight, s.weekdaysChecked),
 			"flip rate": s.multiRun ? pct(s.flips, s.multiRun) : "n/a (1 run)",
 		});
-		const wrong = results.filter(r => !["hit", "correct-reject"].includes(r.outcome) || r.dayRight === false);
+		const wrong = results.filter(r => !["found", "correct-reject"].includes(r.outcome) || r.dayRight === false);
 		for (const r of wrong) console.log(`  ${r.id}: ${r.outcome}${r.dayRight === false ? ` (day ${r.publish.day}, key ${r.key.day})` : ""}`);
 	}
 }
