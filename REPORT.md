@@ -1,8 +1,8 @@
 # Report: measuring a prompt change on a production extraction pipeline
 
-**Status: draft.** Six disputed items still wait on an owner answer, and the
-owner's blind audit of 20 agreements is not done. Any count below can change by
-up to the number of those items it touches when they land.
+**Status: draft.** Owner answers are pending on 6 disputed items in the main set,
+a blind audit of 20 agreements, and 15 disputed items in the held-out set. Any
+count below can change by up to the number of those items it touches.
 
 ## The system
 
@@ -93,8 +93,8 @@ prompt: the publish rule never threw away a real event because of a wrong end da
 The two rules in `ab` were written after reading the production model's errors
 on these same 400 images. So the table shows that the rules fix the errors they
 were written for, without breaking other items in this set. It does not show
-how much they help on new images. The honest test is a held-out set collected
-after the change shipped, scored the same way; it has not been run yet.
+how much they help on new images. That is what the held-out set below tests, and
+on it the gain does not replicate.
 
 The acceptance rule also looks only at misses and false alarms. Dates are
 reported but do not gate a change: `ab` gets 3 days wrong against the
@@ -120,6 +120,29 @@ an event on the wrong night.
   invisible with only one score. On this set it means the date check is doing
   work the prompt does not, so removing it would need its own test.
 
+## Held-out check: the gain does not replicate
+
+331 images seen on 14 and 15 October, after `ab` shipped, from the same 70
+venues (210 short-lived frames, 121 regular posts; a different mix from the
+main set). Same method: the reference model twice for the key, the production
+model twice with each prompt. `without-ab` is today's prompt with the two `ab`
+lines removed.
+
+| Prompt | Misses | False alarms | Day right |
+|---|---|---|---|
+| `ab` (shipped) | 8 | 4 | 120 of 122 |
+| `without-ab` | 9 | 4 | 119 of 121 |
+
+130 of the 331 are events under the key. The two prompts differ on one item: a
+miss the shipped rules avoid. The false-alarm drop seen in-sample (8 to 5) does
+not appear, and nothing got worse. Every miss and false alarm here is one of
+the 15 items where the reference and production models disagree, which the
+owner has not answered yet, so these counts are provisional in either direction.
+
+The honest reading: the `ab` rules are harmless, and their benefit on new data
+is within noise. Shipping them was defensible under the rule as written, and
+the held-out run is what the rule should have required before shipping.
+
 ## What the numbers do not support
 
 - **That `ab` is better by a precise amount, or at all on new images.** The
@@ -136,9 +159,9 @@ an event on the wrong night.
 
 ## Cost
 
-About $40 of API spend in total: roughly $6 per thousand images for the
-production model and $15 for the reference model, plus $1.75 for the
-cross-vendor check.
+About $68 of API spend in total: the main set ~$38, the held-out set ~$25, and
+$1.75 for the cross-vendor check. Per thousand calls, roughly $6–8 for the
+production model and $15–22 for the reference model.
 
 ## Reproduce the method
 
