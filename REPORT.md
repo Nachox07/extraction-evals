@@ -19,13 +19,17 @@ and how do we know?
 The private runs used public venue posts, not in this repo.
 
 - 400 images seen between 3 and 12 October 2026: 329 story frames and 71 feed
-  posts.
-- 300 drawn at random from everything collected, so the mix matches production.
+  posts, from 70 venues in four cities.
+- 300 drawn at random from the 795 usable images collected in that window, so
+  the mix matches what the pipeline saw in those ten days and nothing wider.
   Then 100 "hard" items from the rest: quotas for the categories that cause
   trouble (reposts of another venue's event, opening hours, weekly plans, drink
   and dish photos, dates far ahead with no year, events already over, giveaways,
   job calls, cancellations), filled up with items where models disagreed.
-- 92 of the 400 are events under the key. That is the denominator for misses.
+- 92 of the 400 are events under the key, from 28 venues. That is the
+  denominator for misses. Images are scored independently, and story frames can
+  repeat a venue's plan, so the number of distinct events is somewhat lower and
+  was not counted.
 
 The random and hard sets are reported together below. They are also scored
 apart, and the hard set is never used to make claims about production rates.
@@ -41,8 +45,11 @@ A key built from the model under test grades that model against itself. So:
 2. Items where its two runs disagreed, where it disagreed with the production
    model, where the two picked different days, or where two cheap models both
    contradicted it, were flagged.
-3. The owner answered 20 flagged items on a review page. The owner's answer
-   always wins. 3 verdicts flipped.
+3. 26 items were flagged in total. The owner answered 20 of them on a review
+   page, and the owner's answer always wins; 3 verdicts flipped. 6 are still open.
+   Flagging leans on disagreement, so an item where both Claude models are wrong
+   in the same way is the least likely to be flagged; that is what the blind
+   audit below is for.
 4. A second vendor (GPT-6 Astra, one run, $1.75) answered the 26 disputed items,
    12 posters of events already over, and 20 random items where the models agreed.
    - On the 20 agreements it agreed with the key on 19. The one disagreement was
@@ -82,29 +89,45 @@ in the hard slice. On the random slice it has one miss fewer and the same false 
 No run errored. Misses are the same at the read and publish levels for every
 prompt: the publish rule never threw away a real event because of a wrong end date.
 
+## Read this first: the result is in-sample
+
+The two rules in `ab` were written after reading the production model's errors
+on these same 400 images. So the table shows that the rules fix the errors they
+were written for, without breaking other items in this set. It does not show
+how much they help on new images. The honest test is a held-out set collected
+after the change shipped, scored the same way; it has not been run yet.
+
+The acceptance rule also looks only at misses and false alarms. Dates are
+reported but do not gate a change: `ab` gets 3 days wrong against the
+baseline's 4, so it is no worse, but a prompt could pass the rule and still put
+an event on the wrong night.
+
 ## What the numbers say
 
 - **`ab` was shipped.** It meets the acceptance rule on the pooled counts: no
   more misses than the baseline (2 against 3) and fewer false alarms (5 against 8).
 - **`all` was rejected**, although it has the fewest false alarms. It doubled the
-  misses. Reading them showed why: the audience rule dropped two children's shows,
-  and the first recap wording dropped "one more weekend" and "last tickets"
-  stories. The owner decided family plans stay. The shipped wording says those
-  stories are still events.
+  misses. Two of its six misses are shared with the baseline. The four new ones:
+  two children's shows (dropped by the audience rule), a "last weekend of the
+  season" story (dropped by the first recap wording), and a borderline news post
+  about a charity event, which `ab` also misses. The owner decided family plans
+  stay, and the shipped recap wording says a continuing run is still an event.
 - **The publish rule carries real weight.** At the read level the production
-  model calls 8 or 9 posters of events already over "an event", with an end date
-  before the moment the post was seen. The rule that drops ended events removes
-  all of them. The reference
-  model rejects these while reading, so it gets 0 here. That gap is invisible
-  with only one score, and it means the date check must never be removed on the
-  theory that the prompt handles it.
+  model calls 8 or 9 items "an event" that the key says are not, each with an end
+  before the moment it was seen. The rule that drops ended events removes all of
+  them. For `ab`, all 9 were checked against the key's notes: match screenings
+  and gigs from the night before, seen the next day. The reference model's own
+  answers have 0 such cases, because it rejects them while reading. That gap is
+  invisible with only one score. On this set it means the date check is doing
+  work the prompt does not, so removing it would need its own test.
 
 ## What the numbers do not support
 
-- **That `ab` is better by a precise amount.** A difference of 1 to 3 on 92 events
-  is about the size of run-to-run flips: the same model missed two real events in
-  one run and caught them in the other. The decision is a rule on counts, stated
-  before looking, not a significance claim.
+- **That `ab` is better by a precise amount, or at all on new images.** The
+  margins are 1 miss and 3 false alarms. Run-to-run flips are the same size: the
+  baseline missed two real events in one run and caught them in the other. The
+  false-alarm drop is all in the hard slice. The decision is a rule on counts,
+  stated before looking, not a significance claim, and it is in-sample (above).
 - **Production rates.** 400 images over ten days, from the accounts followed then,
   in a few cities. The random slice matches that mix and nothing wider.
 - **Anything about other models.** A ten-model comparison on an earlier 150-image

@@ -17,6 +17,11 @@ describe("publish policy", () => {
 		expect(dropEnded(ev("a", ...FUTURE), seen)).toBe(false);
 	});
 
+	it("reads a date-only end as the end of that day", () => {
+		expect(dropEnded({ id: "a", run: 0, event: true, end: "2026-10-09" }, seen)).toBe(false);
+		expect(dropEnded({ id: "a", run: 0, event: true, end: "2026-10-08" }, seen)).toBe(true);
+	});
+
 	it("keeps an event with no end or an unreadable end", () => {
 		expect(dropEnded({ id: "a", run: 0, event: true }, seen)).toBe(false);
 		expect(dropEnded({ id: "a", run: 0, event: true, end: "soon" }, seen)).toBe(false);

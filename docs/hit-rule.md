@@ -69,8 +69,12 @@ wrong day still counts as found, and it shows up in the day number.
 - **Duplicates.** Two images of the same event are scored independently.
 - **Malformed answers.** An answer without a yes/no event field is an error, not
   a rejection. Two answers for the same item and run are rejected outright.
-- **Time zones.** All times are the venue's local wall-clock time. A time without
-  an offset is compared as written, the same on every machine.
+- **Time zones.** All times, the seen time included, are the venue's local
+  wall-clock time with no offset, and are compared as written, the same on every
+  machine. A date-only end means the end of that day.
+- **Policy before the vote.** The publish policy is applied to each run, then the
+  runs vote. A run whose end is already past votes "not an event". The flip rate
+  is counted on the raw answers, before the policy.
 - **Ambiguous items.** They stay in the key with the owner's answer. If the owner
   has not answered, the key keeps the reference model's answer, and the item is
   listed in the report.

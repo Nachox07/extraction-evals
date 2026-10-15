@@ -60,10 +60,19 @@ export function parseTime(s: string | null | undefined): Date | null {
 	return Number.isNaN(d.getTime()) ? null : d;
 }
 
-/** Default policy: drop an event whose end is strictly before the moment the item was seen. */
+/**
+ * Default policy: drop an event whose end is strictly before the moment the item was seen.
+ * A date-only end ("2026-10-09") means the end of that day, not its first minute.
+ * Applied to each run before the vote, so a run whose end is past votes "not an event".
+ */
 export const dropEnded: PublishPolicy = (a, seenAt) => {
 	const end = parseTime(a.end);
-	return end !== null && end < seenAt;
+	if (end === null) return false;
+	if (/^\d{4}-\d{2}-\d{2}$/.test((a.end ?? "").trim())) {
+		const nextMidnight = new Date(end.getTime() + 86_400_000);
+		return nextMidnight <= seenAt;
+	}
+	return end < seenAt;
 };
 
 export const noPolicy: PublishPolicy = () => false;
