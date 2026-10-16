@@ -224,7 +224,8 @@ schema (whether the post invites a public comment). It touches no date or event
 rule, yet rerun on the 331 held-out images it changed 2 answers, both for the
 worse against the key: one more miss (a discount story) and one more false alarm
 (a show announced with no date). Runs of the same code almost never disagree
-here (at most 1 item in 331), so the change, not chance, moved them. Any edit to
+here (1 item in 331 flipped), so the edit most likely moved them, though two
+items cannot prove it. Any edit to
 the prompt or schema text now goes through this check.
 
 ## A second change: reading every image of a gallery post
@@ -243,7 +244,7 @@ were not events from their first image alone are events with the rest.
 | Every image of a gallery | 0 | 0 | 1 | 24 of 24 |
 
 Only gallery posts changed, all from "not an event" to "event"; no single-image
-post moved. The one false alarm is the same post in both rows. The cost is 63%
+post moved. The one false alarm is the same post in both rows. The cost is about 65%
 more per feed post. It recovers every miss it was written for, adds no false alarm, and was approved
 to merge on 16 October.
 
@@ -267,7 +268,8 @@ to merge on 16 October.
 About $69 of API spend recorded for these runs: the main set ~$34 (including
 one pass over the 795-image pool to find the hard items), the held-out set $25,
 $1.75 for the cross-vendor check, and ~$9 for the gallery check. Per thousand calls, roughly $6–8 for the
-production model and $15–22 for the reference model.
+production model on single images, about $13 on feed posts with gallery
+reading, and $15–22 for the reference model.
 
 ## Reproduce the method
 
