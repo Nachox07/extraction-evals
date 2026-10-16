@@ -1,7 +1,8 @@
 /**
  * Runs a Claude model over a directory of items and writes answers-<label>.json
- * for the scorer. Every run spends API money: 20 synthetic posters on a mid-size
- * model cost a few cents per run.
+ * for the scorer. Runs the stand-in prompt, not the production one (see the
+ * README). Every run spends API money: 20 synthetic posters on a mid-size model
+ * cost under a dollar per run.
  *
  * Usage: ANTHROPIC_API_KEY=... npm run run-model -- <dir> <model> [--runs N] [--prompt prompts/extract-v1.md] [--label name]
  *

@@ -52,6 +52,12 @@ npm test                                   # scorer tests
 npm run score -- examples/synthetic        # scores every answers-*.json there
 ```
 
+`prompts/extract-v1.md` is a short stand-in written for this repo. It asks for
+the same decision production makes (event or not, start, end, weekdays) but it
+is not the production prompt, which also writes the post text and is not
+published. The numbers in `REPORT.md` come from the production prompt, run
+privately.
+
 `examples/synthetic/answers-fixture.json` is written by hand to show every
 outcome. It is not a model's output. To score a real model on the synthetic set
 (20 images, well under a dollar):

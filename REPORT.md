@@ -246,4 +246,5 @@ production model and $15–22 for the reference model.
 ## Reproduce the method
 
 The real images are other people's posts and are not redistributed here. `examples/synthetic/` has 20 invented posters
-with a key, covering the cases in the hit rule, and the same scorer. See the README.
+with a key, covering the cases in the hit rule, and the same scorer. The prompt
+there is a short stand-in for the same decision, not the production prompt. See the README.
