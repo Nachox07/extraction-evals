@@ -20,9 +20,9 @@ working on the service, is run against the current prompt on the same images,
 twice each, and scored here. It ships only if it has no more misses and no more
 false alarms than the current prompt, and fewer of the errors it was written to
 fix. I make that call; it is a check a
-person applies, not an automatic gate. Since a one-line edit to an unrelated
-schema field moved two answers on the held-out set, that includes edits that
-look unrelated.
+person applies, not an automatic gate. That includes edits that look unrelated: a
+one-line change to an unrelated schema field changed two answers on the
+held-out set.
 
 ## How an image is scored
 
