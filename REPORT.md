@@ -4,6 +4,36 @@
 October: 6 disputes and a blind audit of 20 agreements in the main set, and 15
 disputes in the held-out set. All counts below include those answers.
 
+## Summary
+
+- **Decision.** Prompt `ab` shipped: on 400 images it had 1 miss against the
+  baseline's 2 and 5 false alarms against 8, which meets the acceptance rule set
+  before scoring. Prompt `all` was rejected: fewer false alarms, but 5 misses.
+- **Limit.** `ab`'s two rules were written from errors on those same 400 images,
+  so that result is in-sample.
+- **Held-out.** On 331 images seen after it shipped, both prompts had 1 false
+  alarm. The false-alarm gain did not replicate; `ab` was one miss better.
+- **Voting.** Every item was answered twice; a tie counts as "not an event".
+- **Key caveat.** On the held-out set the owner reviewed only the 15 items where
+  the reference and production models disagreed, and overturned the reference
+  on 9. Without that review the production model would have scored 8 misses
+  instead of 2.
+
+```mermaid
+flowchart TD
+    A[795 images, 3-12 Oct] --> B[300 random + 100 hard]
+    B --> C[Answer key: reference model x2,<br/>26 flagged items to the owner,<br/>second vendor, blind audit of 20]
+    B --> D[Production model x2<br/>with 3 prompts]
+    C --> E{Acceptance rule:<br/>no more misses,<br/>fewer false alarms}
+    D --> E
+    E -->|ab passes| F[ab ships]
+    F --> G[331 new images, 14-15 Oct]
+    G --> H[Key: reference model x2,<br/>owner reviews 15 disagreements,<br/>no blind audit]
+    G --> I[Production model x2,<br/>ab and without-ab]
+    H --> J[False alarms 1 vs 1:<br/>gain does not replicate]
+    I --> J
+```
+
 ## The system
 
 A service reads images that bars and venues post publicly, decides whether each
