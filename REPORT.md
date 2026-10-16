@@ -121,7 +121,7 @@ The two rules in `ab` were written after reading the production model's errors
 on these same 400 images. So the table shows that the rules fix the errors they
 were written for, with fewer errors overall on this set. It does not show
 how much they help on new images. That is what the held-out set below tests, and
-on it the gain does not replicate.
+on it the false-alarm gain does not replicate.
 
 The acceptance rule also looks only at misses and false alarms. Dates are
 reported but do not gate a change: `ab` gets 3 days wrong against the
@@ -147,7 +147,7 @@ an event on the wrong night.
   invisible with only one score. On this set it means the date check is doing
   work the prompt does not, so removing it would need its own test.
 
-## Held-out check: the gain does not replicate
+## Held-out check: the false-alarm gain does not replicate
 
 331 images seen on 14 and 15 October, after `ab` shipped, from the same 70
 venues. Same models and two runs each, but a lighter review: the owner saw only
@@ -169,7 +169,7 @@ removed.
 - A third event only `without-ab` misses.
 
 Both prompts publish the same false alarm: a concert story with no date or time
-on it. So at the publish level the prompts differ on one item, and the shipped
+on it. So at the publish level the prompts differ on one found event, and the shipped
 prompt introduces no error of its own. The in-sample false-alarm drop (8 to 5)
 does not appear: both have 1. Neither prompt flipped between runs here.
 
@@ -182,7 +182,7 @@ the reference model called events. So on new data the key was only as good as
 the owner's review of the disagreements. Without that step the report would have
 said the production model misses 8 events; it misses 2.
 
-On this held-out set `ab` made nothing worse, and its one-item gain is too small
+On this held-out set `ab` added no miss or false alarm, and its one-item gain is too small
 to call. Shipping them was defensible under the rule as written, and
 the held-out run is what the rule should have required before shipping.
 
@@ -200,7 +200,7 @@ that one line.
   all in the hard slice. The decision is a rule on counts, fixed before the
   variants were scored, not a significance claim, and it is in-sample (above).
 - **Production rates.** 400 images over ten days, from 70 venues in
-  four cities. The random slice matches that mix and nothing wider.
+  four cities. The random slice is a sample of that mix and nothing wider.
 - **Anything about other models.** A ten-model comparison on an earlier 150-image
   set exists and is not published. Its key was partly built from the production
   model's own answers, and a ranking from one small private set says more about
@@ -215,5 +215,5 @@ production model and $15–22 for the reference model.
 
 ## Reproduce the method
 
-The real images cannot be shared. `examples/synthetic/` has 20 invented posters
+The real images are other people's posts and are not redistributed here. `examples/synthetic/` has 20 invented posters
 with a key, covering the cases in the hit rule, and the same scorer. See the README.

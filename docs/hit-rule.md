@@ -59,8 +59,10 @@ wrong day still counts as found, and it shows up in the day number.
   improve the number.
 - **Weekdays:** the same majority, then the set must equal the key's set,
   ignoring case and order.
-- **Not scored:** title, description, place, time of day, price. They are prose,
-  and an exact-match rule on prose would mostly measure wording.
+- **Not scored:** title, description, place, time of day, price. The first three
+  are prose, where an exact-match rule would mostly measure wording. Time and price
+  are often missing or written several ways on the poster, and were left out to
+  keep the first version of the rule small.
 
 ## Out of scope
 
