@@ -1,8 +1,8 @@
 # Report: measuring a prompt change on a production extraction pipeline
 
-**Status: draft.** Owner answers are pending on 6 disputed items in the main set,
-a blind audit of 20 agreements, and 15 disputed items in the held-out set. Any
-count below can change by up to the number of those items it touches.
+**Status: draft, counts final.** The owner answered every open item on 16
+October: 6 disputes and a blind audit of 20 agreements in the main set, and 15
+disputes in the held-out set. All counts below include those answers.
 
 ## The system
 
@@ -25,8 +25,7 @@ The private runs used public venue posts, not in this repo.
   trouble (reposts of another venue's event, opening hours, weekly plans, drink
   and dish photos, dates far ahead with no year, events already over, giveaways,
   job calls, cancellations), filled up with items where models disagreed.
-- 92 of the 400 are events under the key, from 28 venues. That is the
-  denominator for misses. Images are scored independently, and a venue often posts
+- 91 of the 400 are events under the key. That is the denominator for misses. Images are scored independently, and a venue often posts
   the same plan more than once, so the number of distinct events is somewhat lower and
   was not counted.
 
@@ -45,7 +44,8 @@ A key built from the model under test grades that model against itself. So:
    model, where the two picked different days, or where two cheap models both
    contradicted it, were flagged.
 3. 26 items were flagged in total. The owner answered 20 of them on a review
-   page, and the owner's answer always wins; 3 verdicts flipped. 6 are still open.
+   page, and the owner's answer always wins; 3 verdicts flipped. He answered the
+   last 6 later, and 2 more flipped.
    Flagging leans on disagreement, so an item where both Claude models are wrong
    in the same way is the least likely to be flagged; that is what the blind
    audit below is for.
@@ -59,8 +59,11 @@ A key built from the model under test grades that model against itself. So:
      answered, 2 clear mistakes of its own, 1 timing edge case, 1 genuinely
      ambiguous item that went back to the owner.
 
-Agreement between models is not truth, so the remaining check is the owner
-labelling the 20 agreements blind, without seeing any model's answer.
+Agreement between models is not truth, so the owner also labelled the 20
+agreements blind, without seeing any model's answer. He agreed with the key on
+19. The one he overturned is a story that points to a link for the details: not
+enough on the image itself to publish. So roughly 1 key error in 20 where both
+Claude models agree, the same rate the second vendor found.
 
 ## Results
 
@@ -70,17 +73,17 @@ All 400 items:
 
 | Prompt | Misses | False alarms (published) | Caught by policy | Day right | Items that flipped |
 |---|---|---|---|---|---|
-| Baseline | 3 | 8 | 9 | 84 of 88 | 3 |
-| `ab`: food-photo rule + recap rule (shipped) | 2 | 5 | 9 | 87 of 90 | 2 |
-| `all`: first recap wording + audience rule | 6 | 2 | 8 | 83 of 86 | 0 |
+| Baseline | 2 | 8 | 9 | 83 of 87 | 3 |
+| `ab`: food-photo rule + recap rule (shipped) | 1 | 5 | 9 | 86 of 89 | 2 |
+| `all`: first recap wording + audience rule | 5 | 2 | 8 | 82 of 85 | 0 |
 
 By slice, misses / false alarms:
 
-| Prompt | Random (300, 51 events) | Hard (100, 41 events) |
+| Prompt | Random (300, 51 events) | Hard (100, 40 events) |
 |---|---|---|
-| Baseline | 2 / 4 | 1 / 4 |
-| `ab` | 1 / 4 | 1 / 1 |
-| `all` | 3 / 1 | 3 / 1 |
+| Baseline | 1 / 3 | 1 / 5 |
+| `ab` | 0 / 3 | 1 / 2 |
+| `all` | 2 / 0 | 3 / 2 |
 
 `ab` is no worse than the baseline on either slice. Its false-alarm gain is all
 in the hard slice. On the random slice it has one miss fewer and the same false alarms.
@@ -104,9 +107,9 @@ an event on the wrong night.
 ## What the numbers say
 
 - **`ab` was shipped.** It meets the acceptance rule on the pooled counts: no
-  more misses than the baseline (2 against 3) and fewer false alarms (5 against 8).
-- **`all` was rejected**, although it has the fewest false alarms. It doubled the
-  misses. Two of its six misses are shared with the baseline. The four new ones:
+  more misses than the baseline (1 against 2) and fewer false alarms (5 against 8).
+- **`all` was rejected**, although it has the fewest false alarms. It more than
+  doubled the misses (5 against 2). One of its five is shared with the baseline. The four new ones:
   two children's shows (dropped by the audience rule), a "last weekend of the
   season" post (dropped by the first recap wording), and a borderline news post
   about a charity event, which `ab` also misses. The owner decided family plans
@@ -129,14 +132,24 @@ lines removed.
 
 | Prompt | Misses | False alarms | Day right |
 |---|---|---|---|
-| `ab` (shipped) | 8 | 4 | 120 of 122 |
-| `without-ab` | 9 | 4 | 119 of 121 |
+| `ab` (shipped) | 2 | 1 | 120 of 122 |
+| `without-ab` | 3 | 1 | 119 of 121 |
 
-130 of the 331 are events under the key. The two prompts differ on one item: a
-miss the shipped rules avoid. The false-alarm drop seen in-sample (8 to 5) does
-not appear, and nothing got worse. Every miss and false alarm here is one of
-the 15 items where the reference and production models disagree, which the
-owner has not answered yet, so these counts are provisional in either direction.
+127 of the 331 are events under the key. The two prompts differ on one item:
+a poster the shipped prompt reads as an event and `without-ab` does not. The
+shipped prompt still loses it, because it gives the event an end date that has
+already passed, so the publish rule drops it. Both prompts miss a new bar's
+opening day and both publish a concert story with no date or time on it. The
+false-alarm drop seen in-sample (8 to 5) does not appear: both prompts have 1.
+
+The 15 items the reference and production models disagreed on went to the
+owner. He overturned the reference model on 9 of them. Against the final key,
+the reference model has 3 misses and 6 false alarms on this set, more than the
+production model. Most of the 9 were stories with too little on the image to
+plan around (a crowd photo, a link to tap, a poster with no day or price), which
+the reference model called events. So on new data the key was only as good as
+the owner's review of the disagreements. Without that step the report would have
+said the production model misses 8 events; it misses 2.
 
 The honest reading: the `ab` rules are harmless, and their benefit on new data
 is within noise. Shipping them was defensible under the rule as written, and
