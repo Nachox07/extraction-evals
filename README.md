@@ -61,6 +61,10 @@ ANTHROPIC_API_KEY=... npm run run-model -- examples/synthetic claude-sonnet-5-5 
 npm run score -- examples/synthetic
 ```
 
+`examples/synthetic/answers-claude-sonnet-5-5.json` is a real run of that command
+(16 October 2026, under a dollar): no misses and no false alarms on the 20 posters,
+which are easy by design. They show the method, not the model.
+
 `npm run posters` re-renders the 20 posters from `examples/synthetic/posters.json`.
 Every venue, act and offer in them is invented.
 
