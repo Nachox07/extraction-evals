@@ -68,6 +68,19 @@ Claude models agree, the same rate the second vendor found.
 ## Results
 
 The production model (Claude Sonnet 5.5, medium effort) with three prompts.
+
+The prompt ends with a list of things that are not an event. The three prompts
+differ only in lines added to that list:
+
+- **Baseline**: the prompt as it ran in production before this work.
+- **`ab`** adds two lines. (a) A photo of a dish, drink or menu, or a news
+  piece about a shop, is not an event unless it states a deal or an event.
+  (b) Footage of a night that is happening now or already happened (a crowd
+  dancing, "anoche", a recap) is not an event, unless it announces a future
+  date, says the plan repeats or continues, or sells tickets.
+- **`all`** adds (a), an earlier and stricter wording of (b) without the
+  "continues" and "tickets" exceptions, and (c) plans aimed only at children,
+  families or seniors are not events.
 Two runs per item. Read and publish levels are defined in `docs/hit-rule.md`.
 All 400 items:
 
