@@ -1,6 +1,6 @@
 # Report: measuring a prompt change on a production extraction pipeline
 
-**Status: draft, counts final.** The owner answered every open item on 16
+**Status: final, 16 October 2026.** The owner answered every open item on 16
 October: 6 disputes and a blind audit of 20 agreements in the main set, and 15
 disputes in the held-out set. All counts below include those answers.
 
