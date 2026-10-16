@@ -142,6 +142,11 @@ The honest reading: the `ab` rules are harmless, and their benefit on new data
 is within noise. Shipping them was defensible under the rule as written, and
 the held-out run is what the rule should have required before shipping.
 
+On 16 October production changed one field description in the extraction
+schema (whether the post invites a public comment). It does not touch the date
+or event rules, but production now differs from the prompt measured here by
+that one line.
+
 ## What the numbers do not support
 
 - **That `ab` is better by a precise amount, or at all on new images.** The
