@@ -1,0 +1,382 @@
+{
+ "label": "claude-sonnet-5-5",
+ "model": "claude-sonnet-5-5",
+ "runs": 2,
+ "prompt": "prompts/extract-v1.md",
+ "usage": {
+  "inputTokens": 99480,
+  "outputTokens": 10086
+ },
+ "answers": [
+  {
+   "id": "s01",
+   "run": 0,
+   "event": true,
+   "start": "2026-10-10 21:00",
+   "end": "2026-10-10 23:59",
+   "weekdays": null,
+   "ms": 2913
+  },
+  {
+   "id": "s01",
+   "run": 1,
+   "event": true,
+   "start": "2026-10-10 21:00",
+   "end": "2026-10-10 23:59",
+   "weekdays": null,
+   "ms": 2730
+  },
+  {
+   "id": "s02",
+   "run": 0,
+   "event": true,
+   "start": "2026-10-08 22:00",
+   "end": "2026-10-08 23:59",
+   "weekdays": [
+    "thu"
+   ],
+   "ms": 3288
+  },
+  {
+   "id": "s02",
+   "run": 1,
+   "event": true,
+   "start": "2026-10-08 22:00",
+   "end": "2026-10-08 23:59",
+   "weekdays": [
+    "thu"
+   ],
+   "ms": 3366
+  },
+  {
+   "id": "s03",
+   "run": 0,
+   "event": false,
+   "start": null,
+   "end": null,
+   "weekdays": null,
+   "ms": 1798
+  },
+  {
+   "id": "s03",
+   "run": 1,
+   "event": false,
+   "start": null,
+   "end": null,
+   "weekdays": null,
+   "ms": 2687
+  },
+  {
+   "id": "s04",
+   "run": 0,
+   "event": false,
+   "start": null,
+   "end": null,
+   "weekdays": null,
+   "ms": 1882
+  },
+  {
+   "id": "s04",
+   "run": 1,
+   "event": false,
+   "start": null,
+   "end": null,
+   "weekdays": null,
+   "ms": 1723
+  },
+  {
+   "id": "s05",
+   "run": 0,
+   "event": false,
+   "start": null,
+   "end": null,
+   "weekdays": null,
+   "ms": 1752
+  },
+  {
+   "id": "s05",
+   "run": 1,
+   "event": false,
+   "start": null,
+   "end": null,
+   "weekdays": null,
+   "ms": 1690
+  },
+  {
+   "id": "s06",
+   "run": 0,
+   "event": true,
+   "start": "2026-10-02 21:30",
+   "end": "2026-10-02 23:59",
+   "weekdays": null,
+   "ms": 3670
+  },
+  {
+   "id": "s06",
+   "run": 1,
+   "event": true,
+   "start": "2026-10-02 21:30",
+   "end": "2026-10-02 23:59",
+   "weekdays": null,
+   "ms": 2925
+  },
+  {
+   "id": "s07",
+   "run": 0,
+   "event": true,
+   "start": "2026-10-10 21:00",
+   "end": "2026-10-10 23:59",
+   "weekdays": null,
+   "ms": 2644
+  },
+  {
+   "id": "s07",
+   "run": 1,
+   "event": true,
+   "start": "2026-10-10 21:00",
+   "end": "2026-10-10 23:59",
+   "weekdays": null,
+   "ms": 3049
+  },
+  {
+   "id": "s08",
+   "run": 0,
+   "event": false,
+   "start": null,
+   "end": null,
+   "weekdays": null,
+   "ms": 2002
+  },
+  {
+   "id": "s08",
+   "run": 1,
+   "event": false,
+   "start": null,
+   "end": null,
+   "weekdays": null,
+   "ms": 1804
+  },
+  {
+   "id": "s09",
+   "run": 0,
+   "event": true,
+   "start": "2026-10-08 19:00",
+   "end": "2026-10-08 21:00",
+   "weekdays": null,
+   "ms": 2154
+  },
+  {
+   "id": "s09",
+   "run": 1,
+   "event": true,
+   "start": "2026-10-08 19:00",
+   "end": "2026-10-08 21:00",
+   "weekdays": null,
+   "ms": 2193
+  },
+  {
+   "id": "s10",
+   "run": 0,
+   "event": true,
+   "start": "2026-10-17 22:00",
+   "end": "2026-10-17 23:59",
+   "weekdays": null,
+   "ms": 1838
+  },
+  {
+   "id": "s10",
+   "run": 1,
+   "event": true,
+   "start": "2026-10-17 22:00",
+   "end": "2026-10-17 23:59",
+   "weekdays": null,
+   "ms": 1832
+  },
+  {
+   "id": "s11",
+   "run": 0,
+   "event": true,
+   "start": "2026-10-10 00:00",
+   "end": "2026-10-24 23:59",
+   "weekdays": null,
+   "ms": 2230
+  },
+  {
+   "id": "s11",
+   "run": 1,
+   "event": true,
+   "start": "2026-10-10 00:00",
+   "end": "2026-10-24 23:59",
+   "weekdays": null,
+   "ms": 2136
+  },
+  {
+   "id": "s12",
+   "run": 0,
+   "event": false,
+   "start": null,
+   "end": null,
+   "weekdays": null,
+   "ms": 1928
+  },
+  {
+   "id": "s12",
+   "run": 1,
+   "event": false,
+   "start": null,
+   "end": null,
+   "weekdays": null,
+   "ms": 1914
+  },
+  {
+   "id": "s13",
+   "run": 0,
+   "event": true,
+   "start": "2026-10-13 00:00",
+   "end": "2026-10-13 23:59",
+   "weekdays": [
+    "tue",
+    "wed"
+   ],
+   "ms": 3559
+  },
+  {
+   "id": "s13",
+   "run": 1,
+   "event": true,
+   "start": "2026-10-13 00:00",
+   "end": "2026-10-13 23:59",
+   "weekdays": [
+    "tue",
+    "wed"
+   ],
+   "ms": 3331
+  },
+  {
+   "id": "s14",
+   "run": 0,
+   "event": true,
+   "start": "2026-10-11 18:30",
+   "end": "2026-10-11 23:59",
+   "weekdays": null,
+   "ms": 2435
+  },
+  {
+   "id": "s14",
+   "run": 1,
+   "event": true,
+   "start": "2026-10-11 18:30",
+   "end": "2026-10-11 23:59",
+   "weekdays": null,
+   "ms": 2584
+  },
+  {
+   "id": "s15",
+   "run": 0,
+   "event": true,
+   "start": "2026-10-10 11:00",
+   "end": "2026-10-10 23:59",
+   "weekdays": null,
+   "ms": 2456
+  },
+  {
+   "id": "s15",
+   "run": 1,
+   "event": true,
+   "start": "2026-10-10 11:00",
+   "end": "2026-10-10 23:59",
+   "weekdays": null,
+   "ms": 2588
+  },
+  {
+   "id": "s16",
+   "run": 0,
+   "event": false,
+   "start": null,
+   "end": null,
+   "weekdays": null,
+   "ms": 1933
+  },
+  {
+   "id": "s16",
+   "run": 1,
+   "event": false,
+   "start": null,
+   "end": null,
+   "weekdays": null,
+   "ms": 2305
+  },
+  {
+   "id": "s17",
+   "run": 0,
+   "event": true,
+   "start": "2026-10-09 23:00",
+   "end": null,
+   "weekdays": null,
+   "ms": 2415
+  },
+  {
+   "id": "s17",
+   "run": 1,
+   "event": true,
+   "start": "2026-10-09 23:00",
+   "end": null,
+   "weekdays": null,
+   "ms": 2263
+  },
+  {
+   "id": "s18",
+   "run": 0,
+   "event": true,
+   "start": "2026-10-09 22:00",
+   "end": "2026-10-09 23:59",
+   "weekdays": null,
+   "ms": 1804
+  },
+  {
+   "id": "s18",
+   "run": 1,
+   "event": true,
+   "start": "2026-10-09 22:00",
+   "end": "2026-10-09 23:59",
+   "weekdays": null,
+   "ms": 1885
+  },
+  {
+   "id": "s19",
+   "run": 0,
+   "event": false,
+   "start": null,
+   "end": null,
+   "weekdays": null,
+   "ms": 1854
+  },
+  {
+   "id": "s19",
+   "run": 1,
+   "event": false,
+   "start": null,
+   "end": null,
+   "weekdays": null,
+   "ms": 1916
+  },
+  {
+   "id": "s20",
+   "run": 0,
+   "event": true,
+   "start": "2026-10-18 00:00",
+   "end": "2026-10-18 23:59",
+   "weekdays": null,
+   "ms": 3253
+  },
+  {
+   "id": "s20",
+   "run": 1,
+   "event": true,
+   "start": "2026-10-18 00:00",
+   "end": "2026-10-18 23:59",
+   "weekdays": null,
+   "ms": 3317
+  }
+ ]
+}

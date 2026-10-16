@@ -69,7 +69,9 @@ for (const item of items) {
 				model,
 				max_tokens: 1024,
 				tools: [REPORT],
-				tool_choice: { type: "tool", name: "report" },
+				// Newer models reject a forced tool choice; "auto" works on all of them, and
+				// an answer with no tool call is recorded as an error.
+				tool_choice: { type: "auto" },
 				messages: [{ role: "user", content: [
 					{ type: "image", source: { type: "base64", media_type: mediaType(buf), data: buf.toString("base64") } },
 					{ type: "text", text: prompt },
