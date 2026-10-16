@@ -41,8 +41,8 @@ the key, at both levels.
 | caught by policy | not an event | event | dropped by the policy |
 | correct reject | not an event | not an event | not an event |
 
-"Caught by policy" is the case of a poster for an event that is already over.
-The key says it is not an event. A model that reads it as an event and gives an
+"Caught by policy" is an item the key says is not an event (usually a poster for
+an event already over) that the model reads as an event with an end in the past. A model that reads it as an event and gives an
 end before the seen time is stopped by the policy. It is neither a found event
 nor a published false alarm, and it is reported on its own because it shows how
 much work the policy is doing. The scorer does not check whether that past date

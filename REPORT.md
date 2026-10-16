@@ -11,16 +11,16 @@ one announces a plan someone could go to, extracts the date, and publishes the
 plans to city channels and a web agenda. A vision model does the reading. Code
 does everything after that, including the rule that drops events already over.
 
-The question this report answers: does a change to the extraction prompt help,
-and how do we know?
+This report measures one change to the extraction prompt: what it fixed, what
+it broke, and whether the gain held on images seen after it shipped.
 
 ## The data
 
 The private runs used public venue posts, not in this repo.
 
 - 400 images seen between 3 and 12 October 2026, from 70 venues in four cities.
-- 300 drawn at random from the 795 usable images collected in that window, so
-  the mix matches what the pipeline saw in those ten days and nothing wider.
+- 300 drawn at random from the 795 usable images of that window: a sample of
+  what the pipeline saw in those ten days and nothing wider.
   Then 100 "hard" items from the rest: quotas for the categories that cause
   trouble (reposts of another venue's event, opening hours, weekly plans, drink
   and dish photos, dates far ahead with no year, events already over, giveaways,
@@ -56,14 +56,15 @@ A key built from the model under test grades that model against itself. So:
    - On the 12 past posters it agreed with the key on 11 that a poster of an
      event already over is not an event.
    - On the disputes it disagreed 8 times: 4 on items the owner had already
-     answered, 2 clear mistakes of its own, 1 timing edge case, 1 genuinely
-     ambiguous item that went back to the owner.
+     answered, 2 clear mistakes of its own, and 2 borderline items (one about
+     timing, one ambiguous) that the owner then settled.
 
 Agreement between models is not truth, so the owner also labelled the 20
 agreements blind, without seeing any model's answer. He agreed with the key on
 19. The one he overturned is a story that points to a link for the details: not
-enough on the image itself to publish. So roughly 1 key error in 20 where both
-Claude models agree, the same rate the second vendor found.
+enough on the image itself to publish. So about 1 key error in 20 where both
+Claude models agree. The second vendor did not catch that one; its single
+disagreement on the 20 was a different item and its own mistake.
 
 ## Results
 
@@ -84,11 +85,16 @@ differ only in lines added to that list:
 Two runs per item. Read and publish levels are defined in `docs/hit-rule.md`.
 All 400 items:
 
-| Prompt | Misses | False alarms (published) | Caught by policy | Day right | Items that flipped |
+| Prompt | Misses | False alarms (published) | Caught by policy | Day right* | Items that flipped |
 |---|---|---|---|---|---|
 | Baseline | 2 | 8 | 9 | 83 of 87 | 3 |
 | `ab`: food-photo rule + recap rule (shipped) | 1 | 5 | 9 | 86 of 89 | 2 |
 | `all`: first recap wording + audience rule | 5 | 2 | 8 | 82 of 85 | 0 |
+
+\* Out of the events found whose key has a day. The key leaves the day empty on
+a few events with no single date (2 of those the baseline found, 1 each for the
+others; 3 for both prompts on the held-out set), so this column is a few
+short of events found.
 
 By slice, misses / false alarms:
 
@@ -101,14 +107,19 @@ By slice, misses / false alarms:
 `ab` is no worse than the baseline on either slice. Its false-alarm gain is all
 in the hard slice. On the random slice it has one miss fewer and the same false alarms.
 
-No run errored. Misses are the same at the read and publish levels for every
-prompt: the publish rule never threw away a real event because of a wrong end date.
+Pooled counts can hide new errors, so item by item: `ab` fixes 2 misses and 6
+false alarms the baseline makes, and introduces 1 miss and 3 false alarms of its
+own.
+
+No run errored. On this set misses are the same at the read and publish levels
+for every prompt: the publish rule never threw away a real event because of a
+wrong end date. On the held-out set it did, once (below).
 
 ## Read this first: the result is in-sample
 
 The two rules in `ab` were written after reading the production model's errors
 on these same 400 images. So the table shows that the rules fix the errors they
-were written for, without breaking other items in this set. It does not show
+were written for, with fewer errors overall on this set. It does not show
 how much they help on new images. That is what the held-out set below tests, and
 on it the gain does not replicate.
 
@@ -139,21 +150,28 @@ an event on the wrong night.
 ## Held-out check: the gain does not replicate
 
 331 images seen on 14 and 15 October, after `ab` shipped, from the same 70
-venues. Same method: the reference model twice for the key, the production
-model twice with each prompt. `without-ab` is today's prompt with the two `ab`
-lines removed.
+venues. Same models and two runs each, but a lighter review: the owner saw only
+the 15 items where the reference and production models disagreed, with no
+blind audit. `without-ab` is the shipped prompt with the two `ab` lines
+removed.
 
-| Prompt | Misses | False alarms | Day right |
-|---|---|---|---|
-| `ab` (shipped) | 2 | 1 | 120 of 122 |
-| `without-ab` | 3 | 1 | 119 of 121 |
+| Prompt | Misses (read) | Misses (publish) | False alarms | Day right* |
+|---|---|---|---|---|
+| `ab` (shipped) | 1 | 2 | 1 | 120 of 122 |
+| `without-ab` | 3 | 3 | 1 | 119 of 121 |
 
-127 of the 331 are events under the key. The two prompts differ on one item:
-a poster the shipped prompt reads as an event and `without-ab` does not. The
-shipped prompt still loses it, because it gives the event an end date that has
-already passed, so the publish rule drops it. Both prompts miss a new bar's
-opening day and both publish a concert story with no date or time on it. The
-false-alarm drop seen in-sample (8 to 5) does not appear: both prompts have 1.
+127 of the 331 are events under the key. The misses, item by item:
+
+- Both prompts miss a new bar's opening day.
+- A cinema promotion is a gallery whose first image prints no dates. The shipped
+  prompt reads it as an event but guesses the publication day as its end, so the
+  publish rule drops it. `without-ab` rejects it outright. Both lose it.
+- A third event only `without-ab` misses.
+
+Both prompts publish the same false alarm: a concert story with no date or time
+on it. So at the publish level the prompts differ on one item, and the shipped
+prompt introduces no error of its own. The in-sample false-alarm drop (8 to 5)
+does not appear: both have 1. Neither prompt flipped between runs here.
 
 The 15 items the reference and production models disagreed on went to the
 owner. He overturned the reference model on 9 of them. Against the final key,
@@ -164,8 +182,8 @@ the reference model called events. So on new data the key was only as good as
 the owner's review of the disagreements. Without that step the report would have
 said the production model misses 8 events; it misses 2.
 
-The honest reading: the `ab` rules are harmless, and their benefit on new data
-is within noise. Shipping them was defensible under the rule as written, and
+On this held-out set `ab` made nothing worse, and its one-item gain is too small
+to call. Shipping them was defensible under the rule as written, and
 the held-out run is what the rule should have required before shipping.
 
 On 16 October production changed one field description in the extraction
@@ -176,12 +194,13 @@ that one line.
 ## What the numbers do not support
 
 - **That `ab` is better by a precise amount, or at all on new images.** The
-  margins are 1 miss and 3 false alarms. Run-to-run flips are the same size: the
-  baseline missed two real events in one run and caught them in the other. The
-  false-alarm drop is all in the hard slice. The decision is a rule on counts,
-  stated before looking, not a significance claim, and it is in-sample (above).
-- **Production rates.** 400 images over ten days, from the venues followed then,
-  in a few cities. The random slice matches that mix and nothing wider.
+  margins are 1 miss and 3 false alarms in-sample, and 1 miss held-out. Run-to-run
+  flips are close to that size: 3 items flipped between the baseline's two runs,
+  one of them a real event it found once and missed once. The false-alarm drop is
+  all in the hard slice. The decision is a rule on counts, fixed before the
+  variants were scored, not a significance claim, and it is in-sample (above).
+- **Production rates.** 400 images over ten days, from 70 venues in
+  four cities. The random slice matches that mix and nothing wider.
 - **Anything about other models.** A ten-model comparison on an earlier 150-image
   set exists and is not published. Its key was partly built from the production
   model's own answers, and a ranking from one small private set says more about
@@ -189,11 +208,12 @@ that one line.
 
 ## Cost
 
-About $68 of API spend in total: the main set ~$38, the held-out set ~$25, and
-$1.75 for the cross-vendor check. Per thousand calls, roughly $6–8 for the
+About $60 of API spend recorded for these runs: the main set ~$34 (including
+one pass over the 795-image pool to find the hard items), the held-out set $25,
+and $1.75 for the cross-vendor check. Per thousand calls, roughly $6–8 for the
 production model and $15–22 for the reference model.
 
 ## Reproduce the method
 
 The real images cannot be shared. `examples/synthetic/` has 20 invented posters
-with a key, one per kind of case in the hit rule, and the same scorer. See the README.
+with a key, covering the cases in the hit rule, and the same scorer. See the README.
