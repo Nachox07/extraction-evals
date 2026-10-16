@@ -18,6 +18,8 @@ disputes in the held-out set. All counts below include those answers.
   the reference and production models disagreed, and overturned the reference
   on 9. Without that review the production model would have scored 8 misses
   instead of 2.
+- **Second change.** Reading every image of a gallery post took misses on the
+  121 held-out feed posts from 4 to 0, with false alarms unchanged at 1.
 
 ```mermaid
 flowchart TD
@@ -36,7 +38,8 @@ flowchart TD
 
 ## The system
 
-A service reads images that bars and venues post publicly, decides whether each
+This pipeline powers [Tardeo](https://tardeo.ai): its web agenda and city
+Telegram channels. A service reads images that bars and venues post publicly, decides whether each
 one announces a plan someone could go to, extracts the date, and publishes the
 plans to city channels and a web agenda. A vision model does the reading. Code
 does everything after that, including the rule that drops events already over.
@@ -217,9 +220,32 @@ to call. Shipping them was defensible under the rule as written, and
 the held-out run is what the rule should have required before shipping.
 
 On 16 October production changed one field description in the extraction
-schema (whether the post invites a public comment). It does not touch the date
-or event rules, but production now differs from the prompt measured here by
-that one line.
+schema (whether the post invites a public comment). It touches no date or event
+rule, yet rerun on the 331 held-out images it changed 2 answers, both for the
+worse against the key: one more miss (a discount story) and one more false alarm
+(a show announced with no date). Runs of the same code almost never disagree
+here (at most 1 item in 331), so the change, not chance, moved them. Any edit to
+the prompt or schema text now goes through this check.
+
+## A second change: reading every image of a gallery post
+
+The one real event both prompts lost above was a gallery whose first image
+prints no dates. Production read only that first image. A change sends the
+other images of a gallery too. It was scored on the 121 feed posts of the
+held-out set (28 of them galleries, 70 extra images), against the same code
+reading only the first image, two runs each. Where the extra images change what
+the post is, the owner labelled it again with all images in view: 3 posts that
+were not events from their first image alone are events with the rest.
+
+| Reads | Misses (read) | Misses (publish) | False alarms | Day right |
+|---|---|---|---|---|
+| First image only | 3 | 4 | 1 | 20 of 20 |
+| Every image of a gallery | 0 | 0 | 1 | 24 of 24 |
+
+Only gallery posts changed, all from "not an event" to "event"; no single-image
+post moved. The one false alarm is the same post in both rows. The cost is 63%
+more per feed post. It recovers every miss it was written for, adds no false alarm, and was approved
+to merge on 16 October.
 
 ## What the numbers do not support
 
@@ -238,9 +264,9 @@ that one line.
 
 ## Cost
 
-About $60 of API spend recorded for these runs: the main set ~$34 (including
+About $69 of API spend recorded for these runs: the main set ~$34 (including
 one pass over the 795-image pool to find the hard items), the held-out set $25,
-and $1.75 for the cross-vendor check. Per thousand calls, roughly $6–8 for the
+$1.75 for the cross-vendor check, and ~$9 for the gallery check. Per thousand calls, roughly $6–8 for the
 production model and $15–22 for the reference model.
 
 ## Reproduce the method

@@ -1,8 +1,9 @@
 # extraction-evals
 
 How I decide whether a prompt change to a production LLM pipeline actually
-helped. The pipeline is my side project: a vision model reads what about 70
-venues post, extracts the events, and code publishes them every day.
+helped. The pipeline powers [Tardeo](https://tardeo.ai), a free agenda of
+evening plans in Málaga, Sevilla, Fuengirola and Marbella: a vision model reads
+what about 70 venues post, extracts the events, and code publishes them every day.
 
 **The result, in short.** A prompt change (`ab`) cut false alarms from 8 to 5 on
 400 images and shipped under an acceptance rule fixed in advance. Its rules had
@@ -11,6 +12,17 @@ seen after it shipped. There both prompts had 1 false alarm: the gain did not
 replicate. On the same new images, my review of the 15 items where two models
 disagreed changed the production model's count from 8 misses to 2. Full write-up:
 [`REPORT.md`](REPORT.md).
+
+## When a prompt change is proposed
+
+A change to the extraction prompt or its schema, from me or from a coding agent
+working on the service, is run against the current prompt on the same images,
+twice each, and scored here. It ships only if it has no more misses and no more
+false alarms than the current prompt, and fewer of the errors it was written to
+fix. I make that call; it is a check a
+person applies, not an automatic gate. Since a one-line edit to an unrelated
+schema field moved two answers on the held-out set, that includes edits that
+look unrelated.
 
 ## How an image is scored
 
@@ -41,8 +53,7 @@ The harness:
 - scores at **two levels**, what the model read and what would be published, so a
   past event stopped by the policy gets its own count instead of disappearing;
 - reports the **flip rate**, the noise floor;
-- is the **acceptance check** for a prompt change: it ships only with no more
-  misses and fewer false alarms than the current prompt.
+- is the **acceptance check** for a prompt change (see above).
 
 ## Run it
 
