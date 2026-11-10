@@ -6,8 +6,9 @@ number and noting the change here with its date.
 
 ## Unit
 
-In the October study, one image is one item. (The November set also includes
-the caption and every image of a multi-image post; see `REPORT.md`.) The model gives one answer per image: "an event" or
+In the October study, one image is one item. In the November study, one whole
+post (cover, other images and caption) is one item, with one answer per item;
+see `REPORT.md`. The model gives one answer per image: "an event" or
 "not an event", plus a start, an end and, for a standing weekly plan, the weekdays.
 
 ## Verdict per item
@@ -18,8 +19,8 @@ the caption and every image of a multi-image post; see `REPORT.md`.) The model g
   column and stay in the denominator, so a model cannot look better by failing.
 - Otherwise the verdict is the strict majority of the answered runs. A tie is
   "not an event", because publishing is the costly side.
-- Items whose runs disagree count towards the flip rate. The flip rate is not the
-  whole noise floor: also report the range of error counts across several runs.
+- Items whose runs disagree count towards the flip rate. A flip count alone hides
+  run-to-run spread: also report the per-run range of misses and false alarms.
 
 ## Two levels
 
@@ -68,7 +69,7 @@ wrong day still counts as found, and it shows up in the day number.
 
 ## Out of scope
 
-- **Posters that list several events.** One verdict per image. Splitting a
+- **Posters that list several events.** One verdict per item (October: per image; November: per whole post). Splitting a
   programme into one plan per act is a different task with its own labels.
 - **Duplicates.** Two images of the same event are scored independently.
 - **Malformed answers.** An answer without a yes/no event field is an error, not

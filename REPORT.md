@@ -1,11 +1,12 @@
 # Report: measuring a prompt change on a production extraction pipeline
 
 **What changed in November.** The October set below is saturated, so I drew a
-fresh, harder one and had the method reviewed by models from two other vendors.
-The review found five flaws, including one as large as the effect being
-measured. All five are fixed, and the October numbers stay as published, labelled
-as the October study. Details at the end:
-[November: a fresh held-out set and an outside review of the method](#november-a-fresh-held-out-set-and-an-outside-review-of-the-method).
+fresh, harder one and had the method attacked in an adversarial review by models
+from two other vendors (not a person). The review found five flaws. All five are
+fixed, and the October numbers stay as published, labelled as the October study.
+The October key was built differently, and how far the November flaws apply to it
+was not measured. Details at the end:
+[November: a fresh held-out set and an adversarial review of the method](#november-a-fresh-held-out-set-and-an-adversarial-review-of-the-method).
 
 **October study. Status: final, 16 October 2026.** The owner answered every open item on 16
 October: 6 disputes and a blind audit of 20 agreements in the main set, and 15
@@ -61,10 +62,8 @@ The private runs used public venue posts, not in this repo.
 - 400 images seen between 3 and 12 October 2026, from 70 venues in four cities.
 - 300 drawn at random from the 795 usable images of that window: a sample of
   what the pipeline saw in those ten days and nothing wider.
-  Then 100 "hard" items from the rest: quotas for the categories that cause
-  trouble (reposts of another venue's event, opening hours, weekly plans, drink
-  and dish photos, dates far ahead with no year, events already over, giveaways,
-  job calls, cancellations), filled up with items where models disagreed.
+  Then 100 "hard" items from the rest: quotas for hard categories chosen from
+  earlier errors, filled up with items where models disagreed.
 - 91 of the 400 are events under the key. That is the denominator for misses. Images are scored independently, and a venue often posts
   the same plan more than once, so the number of distinct events is somewhat lower and
   was not counted.
@@ -112,14 +111,14 @@ The production model (Claude Sonnet 5.5, medium effort) with three prompts.
 
 The prompt ends with a list of things that are not an event. The three prompts
 differ only in what was added to that list. The wording is production prompt text
-and is not published; the kind of change is:
+and is not published; they are described here by their measured effects:
 
 - **Baseline**: the prompt as it ran in production before this work.
-- **`narrower`** added two items to the list. Both were aimed at the false alarms
-  seen in the baseline's errors, and each came with exceptions so that real plans
-  stayed in.
-- **`broader`** added items of the same kind and also excluded a whole audience
-  segment. That cost misses.
+- **`narrower`** added two items to the list, aimed at the false alarms seen in
+  the baseline's errors. In-sample it had fewer false alarms and passed the
+  acceptance rule; on fresh images that gain did not replicate.
+- **`broader`** added more items of the same kind. It had fewer false alarms
+  but more misses.
 Two runs per item. Read and publish levels are defined in `docs/hit-rule.md`.
 All 400 items:
 
@@ -172,9 +171,8 @@ an event on the wrong night.
   more misses than the baseline (1 against 2) and fewer false alarms (5 against 8).
 - **`broader` was rejected**, although it has the fewest false alarms. It more than
   doubled the misses (5 against 2). One of its five is shared with the baseline.
-  The four new ones came from its added exclusions, including a borderline news
-  post about a charity event, which `narrower` also misses. The owner decided that
-  the audience segment stays in scope.
+  Four of the five misses were new; the owner judged them real events that its
+  additions wrongly excluded, and one borderline case is also missed by `narrower`.
 - **The publish rule carries real weight.** At the read level the production
   model calls 8 or 9 items "an event" that the key says are not, each with an end
   before the moment it was seen. The rule that drops ended events removes all of
@@ -272,9 +270,7 @@ to merge on 16 October.
 
 About $69 of API spend recorded for these runs: the main set ~$34 (including
 one pass over the 795-image pool to find the hard items), the held-out set $25,
-$1.75 for the cross-vendor check, and ~$9 for the multi-image check. Per thousand calls, roughly $6–8 for the
-production model on single images, about $13 on multi-image posts with full
-reading, and $15–22 for the reference model.
+$1.75 for the cross-vendor check, and ~$9 for the multi-image check.
 
 ## Reproduce the method
 
@@ -282,7 +278,7 @@ The real images are other people's posts and are not redistributed here. `exampl
 with a key, covering the cases in the hit rule, and the same scorer. The prompt
 there is a short stand-in for the same decision, not the production prompt. See the README.
 
-## November: a fresh held-out set and an outside review of the method
+## November: a fresh held-out set and an adversarial review of the method
 
 Written 10 November 2026. Aggregate only; the images, the labels and the
 production prompt stay private.
@@ -291,12 +287,12 @@ production prompt stay private.
 images, so that set could no longer tell two setups apart. I drew a fresh set of
 260 items from two later weeks. It is deliberately heavy in hard cases, not a
 random sample, so it compares models with each other and says nothing about
-absolute accuracy. Items now include the caption and every image of a
+absolute accuracy; the ranking between models may differ on the production mix. Items now include the caption and every image of a
 multi-image post.
 
-**The outside review.** I gave the method, the scorer and the key-building steps
-to models from two other vendors and asked them to break it. They found five
-flaws. All five are fixed.
+**The adversarial review.** I gave the method, the scorer and the key-building steps
+to models from two other vendors (not a person) and asked them to break it. They
+found five flaws. All five are fixed.
 
 1. **The labellers saw the prompt under test.** The key was built by models that
    had been given the production prompt's rules, so the key repeated the prompt
@@ -306,23 +302,26 @@ flaws. All five are fixed.
    seen? They never see the prompt.
 2. **Labellers judged dates against different moments.** One judged "tonight"
    against the publication time, another against the moment of the scan. That
-   split 13 of the 14 disputed items. One rubric now fixes the moment: relative
+   split 13 of the 14 items disputed in the first key. One rubric now fixes the moment: relative
    words resolve against the publication time to find the calendar day, and
    attendability is judged at the moment the item was seen.
 3. **Unanimous items with no readable date were thrown out** as disputes. They
    stay in the key now, with the day left empty and skipped when scoring days.
-4. **Scorer bugs.** Timestamps with no offset were read in the machine's time
-   zone; a date-only end was treated as the start of that day instead of the
-   end; weekday names did not match across formats. The public scorer in this
-   repo already read naive times as wall-clock time and a date-only end as the
-   whole day, and its tests lock both; the weekday test was added with this update.
+4. **Scorer bugs.** The private scorer used for the first November pass read
+   timestamps with no offset in the machine's time zone, treated a date-only end
+   as the start of that day instead of the end, and did not match weekday names
+   across formats. The November numbers here come from the fixed scorer. The
+   public scorer in this repo never had the time-zone or date-only bugs, and its
+   tests lock both; the weekday test was added with this update.
 5. **Two runs were too few.** Each model now gets several runs (5 for the
    current model, 3 for a cheaper one). I report the range of error counts
    across runs and a paired exact McNemar test, not a single count.
 
-**The key.** Three models from three vendors labelled every item blind with the
-shared rubric. 250 of the 260 items were agreed. The 10 disputed ones are scored
-apart and never majority-voted into the score, so they cannot move the numbers.
+**The key.** Each item got three blind labels from models of three vendors, with
+the shared rubric, on 256 items. For the last 4, the third vendor's quota ran out
+and a second pass of the first model was used instead. 250 of the 260 items were
+agreed. 14 items had been disputed under the first key; 10 are disputed under the
+rubric. Those 10 are scored apart and never majority-voted into the score.
 
 **Results (250 agreed items).** Per-run ranges:
 
@@ -333,18 +332,24 @@ apart and never majority-voted into the score, so they cannot move the numbers.
 
 - The cheaper model missed more real plans in every run, and the ranges do not
   overlap. It also raised fewer false alarms.
-- Total errors (misses plus false alarms) tied within the noise. On the paired
-  test the two models differ on 9 and 10 items, p = 1.00. On misses alone they
-  differ on 4 against 9 items, p = 0.27. Neither is significant on 250 items.
-- The error count of the same current model moved by 5 items across its 5 runs.
-  The flip rate between runs was a few percent and did not show this. A noise
-  floor needs both the flips and the range of error counts.
+- No detectable difference in total errors (misses plus false alarms): the two
+  models differ on 9 against 10 items, p = 1.00. That does not show they are
+  equal. On misses alone they differ on 4 against 9 items, p = 0.27.
+- The run ranges show run-to-run noise only. The paired test works item by item,
+  and it does not support a difference in misses. It compares majorities of 5 and
+  3 runs while production makes one call, and the items are not fully independent
+  (the same plan can appear more than once).
+- Across 5 runs the current model's false alarms ranged from 3 to 8 and its
+  misses from 10 to 12, and its total error count moved by 5 items. A single
+  count hides that spread, so I report the per-run range next to the flip count
+  (9 of 250 items flipped for the current model).
 - **Decision.** Keep the current model, with the evidence stated as weaker than I
   first said. The next step is a live shadow comparison, since a set this size
   cannot settle it.
 
 **Lessons.** Agreement between model labellers is not truth when they share the
-prompt under test. An outside adversarial review found bugs as large as the
-effect I was trying to measure. The code for the paired test and the ranges is
-in `src/score.ts` (`mcnemarExact`, `runRange`) and prints from `npm run score`
+prompt under test. An adversarial review by other models found method
+problems that mattered: the labeller date split alone produced 13 disputed items,
+more than the 4 to 7 item per-run miss gap between the two models. The code for the paired test and the ranges is
+in `src/score.ts` (`mcnemarExact`, `runRange`) and prints misses, false alarms and combined errors from `npm run score`
 when given answers from two or more models.

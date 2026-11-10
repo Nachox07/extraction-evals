@@ -11,8 +11,7 @@ been written from errors on those same images, so I ran it again on 331 images
 seen after it shipped. There both prompts had 1 false alarm: the gain did not
 replicate. On the same new images, my review of the 15 items where two models
 disagreed changed the production model's count from 8 misses to 2. Full write-up:
-[`REPORT.md`](REPORT.md), which also covers a November follow-up: a fresh
-held-out set and an outside review that found five flaws in my own method.
+[`REPORT.md`](REPORT.md), which also covers a November follow-up: a fresh blind-labelled set, and an adversarial review by models from two other vendors that found five flaws in my own method.
 
 ## When a prompt change is proposed
 
@@ -45,9 +44,9 @@ flowchart LR
 ```
 
 The flip rate (items whose runs disagree) is counted on the raw answers, before
-the policy. It does not set the noise floor alone: also report the per-run range
-of error counts across several runs. On a new held-out set the error count of one
-model moved by 5 items across 5 runs of the same setup. What counts as each
+the policy. A flip count alone hides run-to-run spread: on a new held-out set,
+across 5 runs of one model false alarms ranged 3 to 8 and misses 10 to 12, while
+9 of 250 items flipped. So report the per-run range next to the flip count. What counts as each
 outcome was written down before any number existed: [`docs/hit-rule.md`](docs/hit-rule.md).
 
 The harness:
@@ -93,15 +92,15 @@ Every venue, act and offer in them is invented.
 
 ## What the tests lock
 
-The 30 tests in `src/__tests__/score.test.ts` pin the rules that change the
+The 31 tests in `src/__tests__/score.test.ts` pin the rules that change the
 numbers: errors stay in the denominator; a tie votes "not an event"; the policy
 runs on each answer before the vote; the flip rate is counted before the policy;
 a real event dropped for a wrong past end is a publish miss, not a read miss; a
 date-only end lasts the whole day; a time with no offset reads the same on every
 machine; full weekday names match three-letter keys. The paired comparison is
-locked too: exact McNemar values (4 against 9 gives about 0.27, 9 against 10
-gives 1, 0 against 0 gives 1), symmetry, large counts, the per-run range, and
-the discordant-pair counts for misses and false alarms.
+locked too: exact McNemar values, symmetry, large counts, the per-run range, and
+the discordant-pair counts for misses, false alarms and combined errors, with
+errored items skipped and counted.
 
 Code: `src/score.ts` (the rules, no I/O), `src/cli.ts` (reads the files, prints
 the table), `scripts/run-model.ts` (runs a Claude model with

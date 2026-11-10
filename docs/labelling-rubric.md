@@ -22,12 +22,8 @@ event can still be attended; the day is the first such event.
 
 ## event = false
 
-- The plan is already over at the seen time: a recap, thanks, photos of a past
-  night, a poster for a date that has passed.
-- Generic promotion with no plan and no date: "come and visit us", a menu, a
-  mood photo.
-- A call to act that is not a plan to attend: a volunteer call, a design contest,
-  a survey, a hiring post.
+- The plan is already over at the seen time.
+- There is no plan and no date.
 - The plan is not open to the public (see closed groups below).
 
 ## Resolving dates
@@ -52,16 +48,11 @@ The same post seen on Friday at 21:00 is still attendable: event = true.
 `closed_group = true` when the plan is not open to the general public in either
 of these ways, and only when event = true:
 
-- **(a) Enrolment course.** A recurring course, class series, school term or
-  workshop programme where you must enrol or register to take part.
-- **(b) Age-restricted or members-only activity.** Reserved for an age group or a
-  sub-population (for example seniors, or a young-adult age band, or members of
-  one school or association).
+- **(a) Enrolment course.** A recurring course where you must enrol to take part.
+- **(b) Restricted activity.** An activity restricted to an age group or to members.
 
-`closed_group = false` for open family drop-in plans (an open children's
-workshop, a story hour, a family show with entry for anyone), for concerts,
-parties and exhibitions, for one-off public events, and for a one-off workshop
-anyone can book. Write down the basis for the answer.
+`closed_group = false` for anything open to anyone, including one-off public
+events and a one-off activity anyone can book. Write down the basis for the answer.
 
 ## Confidence and reason
 

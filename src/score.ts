@@ -247,22 +247,27 @@ export function runsOf(answers: Answer[]): number[] {
 
 /**
  * Items that one result gets wrong (per `isError`) and the other gets right.
- * Pair on the item id; items missing from either side are left out.
+ * Pair on the item id; items missing from either side are left out, and items where
+ * either side errored are skipped and counted (an error is neither right nor wrong).
  */
-export function discordant(a: ItemResult[], b: ItemResult[], isError: (r: ItemResult) => boolean): { onlyA: number; onlyB: number } {
+export function discordant(a: ItemResult[], b: ItemResult[], isError: (r: ItemResult) => boolean): { onlyA: number; onlyB: number; skipped: number } {
 	const other = new Map(b.map(r => [r.id, r]));
 	let onlyA = 0;
 	let onlyB = 0;
+	let skipped = 0;
 	for (const r of a) {
 		const o = other.get(r.id);
 		if (!o) continue;
+		if (r.outcome === "error" || o.outcome === "error") { skipped++; continue; }
 		const ea = isError(r);
 		const eb = isError(o);
 		if (ea && !eb) onlyA++;
 		else if (eb && !ea) onlyB++;
 	}
-	return { onlyA, onlyB };
+	return { onlyA, onlyB, skipped };
 }
 
 export const isMiss = (r: ItemResult): boolean => r.outcome === "miss" || r.outcome === "publish-miss";
 export const isFalseAlarm = (r: ItemResult): boolean => r.outcome === "false-alarm";
+/** Any wrong publish decision: a miss or a false alarm. */
+export const isWrong = (r: ItemResult): boolean => isMiss(r) || isFalseAlarm(r);

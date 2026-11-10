@@ -14,7 +14,7 @@
  */
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, join } from "node:path";
-import { discordant, dropEnded, isFalseAlarm, isMiss, mcnemarExact, noPolicy, runRange, runsOf, score, type Answer, type Item, type ItemResult, type KeyEntry } from "./score.js";
+import { discordant, dropEnded, isFalseAlarm, isMiss, isWrong, mcnemarExact, noPolicy, runRange, runsOf, score, type Answer, type Item, type ItemResult, type KeyEntry } from "./score.js";
 
 const args = process.argv.slice(2);
 const jsonAt = args.indexOf("--json");
@@ -77,9 +77,9 @@ if (labels.length > 1) {
 		for (let j = i + 1; j < labels.length; j++) {
 			const a = majorityResults.get(labels[i]!)!;
 			const b = majorityResults.get(labels[j]!)!;
-			for (const [what, pred] of [["misses", isMiss], ["false alarms", isFalseAlarm]] as const) {
+			for (const [what, pred] of [["misses", isMiss], ["false alarms", isFalseAlarm], ["misses or false alarms", isWrong]] as const) {
 				const d = discordant(a, b, pred);
-				console.log(`  ${labels[i]} vs ${labels[j]}, ${what}: only first wrong ${d.onlyA}, only second wrong ${d.onlyB}, p = ${mcnemarExact(d.onlyA, d.onlyB).toFixed(2)}`);
+				console.log(`  ${labels[i]} vs ${labels[j]}, ${what}: only first wrong ${d.onlyA}, only second wrong ${d.onlyB}, skipped (errored) ${d.skipped}, p = ${mcnemarExact(d.onlyA, d.onlyB).toFixed(2)}`);
 			}
 		}
 	}

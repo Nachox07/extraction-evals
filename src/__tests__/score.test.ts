@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { discordant, dropEnded, isFalseAlarm, isMiss, majority, mcnemarExact, runRange, runsOf, normWeekdays, parseTime, score, verdictOf, type Answer, type Item, type KeyEntry } from "../score.js";
+import { discordant, dropEnded, isFalseAlarm, isMiss, isWrong, majority, mcnemarExact, runRange, runsOf, normWeekdays, parseTime, score, verdictOf, type Answer, type Item, type KeyEntry } from "../score.js";
 
 const SEEN = "2026-10-09T14:00:00";
 const seen = new Date(SEEN);
@@ -185,8 +185,17 @@ describe("paired comparison", () => {
 		// A misses "m" and false-alarms "f"; B finds "m", misses nothing, but false-alarms "f" too
 		const A = score(items, k, [no("m"), ev("f", ...FUTURE), ev("ok", ...FUTURE)]).results;
 		const B = score(items, k, [ev("m", ...FUTURE), ev("f", ...FUTURE), no("ok")]).results;
-		expect(discordant(A, B, isMiss)).toEqual({ onlyA: 1, onlyB: 1 });
-		expect(discordant(A, B, isFalseAlarm)).toEqual({ onlyA: 0, onlyB: 0 });
+		expect(discordant(A, B, isMiss)).toEqual({ onlyA: 1, onlyB: 1, skipped: 0 });
+		expect(discordant(A, B, isFalseAlarm)).toEqual({ onlyA: 0, onlyB: 0, skipped: 0 });
+		expect(discordant(A, B, isWrong)).toEqual({ onlyA: 1, onlyB: 1, skipped: 0 });
+	});
+
+	it("skips and counts items where either side errored", () => {
+		const items = ["x", "y"].map(item);
+		const k = { x: key(true), y: key(true) };
+		const A = score(items, k, [err("x"), no("y")]).results;
+		const B = score(items, k, [no("x"), ev("y", ...FUTURE)]).results;
+		expect(discordant(A, B, isMiss)).toEqual({ onlyA: 1, onlyB: 0, skipped: 1 });
 	});
 });
 
