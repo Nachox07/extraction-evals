@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { dropEnded, majority, normWeekdays, parseTime, score, verdictOf, type Answer, type Item, type KeyEntry } from "../score.js";
+import { discordant, dropEnded, isFalseAlarm, isMiss, isWrong, majority, mcnemarExact, runRange, runsOf, normWeekdays, parseTime, score, verdictOf, type Answer, type Item, type KeyEntry } from "../score.js";
 
 const SEEN = "2026-10-09T14:00:00";
 const seen = new Date(SEEN);
@@ -146,5 +146,62 @@ describe("time parsing", () => {
 
 	it("keeps an explicit offset", () => {
 		expect(parseTime("2026-10-09T21:30:00+02:00")?.toISOString()).toBe("2026-10-09T19:30:00.000Z");
+	});
+});
+
+describe("paired comparison", () => {
+	it("gives the exact two-sided McNemar p for known counts", () => {
+		expect(mcnemarExact(4, 9)).toBeCloseTo(0.267, 3);
+		expect(mcnemarExact(9, 10)).toBe(1);
+		expect(mcnemarExact(0, 0)).toBe(1);
+		expect(mcnemarExact(0, 10)).toBeCloseTo(0.00195, 5);
+	});
+
+	it("is symmetric in the two models and never above 1", () => {
+		expect(mcnemarExact(4, 9)).toBeCloseTo(mcnemarExact(9, 4), 12);
+		expect(mcnemarExact(5, 5)).toBe(1);
+		expect(mcnemarExact(1, 2)).toBeLessThanOrEqual(1);
+	});
+
+	it("stays finite for large counts", () => {
+		const p = mcnemarExact(900, 1100);
+		expect(p).toBeGreaterThan(0);
+		expect(p).toBeLessThanOrEqual(1);
+	});
+
+	it("reports the smallest and largest count across runs", () => {
+		expect(runRange([11, 11, 10, 12, 11])).toEqual({ min: 10, max: 12 });
+		expect(runRange([7])).toEqual({ min: 7, max: 7 });
+		expect(() => runRange([])).toThrow();
+	});
+
+	it("lists the distinct runs of an answers file", () => {
+		expect(runsOf([no("a", 2), no("b", 0), no("a", 0)])).toEqual([0, 2]);
+	});
+
+	it("counts items one model gets wrong and the other right, per error kind", () => {
+		const items = ["m", "f", "ok"].map(item);
+		const k = { m: key(true), f: key(false), ok: key(true) };
+		// A misses "m" and false-alarms "f"; B finds "m", misses nothing, but false-alarms "f" too
+		const A = score(items, k, [no("m"), ev("f", ...FUTURE), ev("ok", ...FUTURE)]).results;
+		const B = score(items, k, [ev("m", ...FUTURE), ev("f", ...FUTURE), no("ok")]).results;
+		expect(discordant(A, B, isMiss)).toEqual({ onlyA: 1, onlyB: 1, skipped: 0 });
+		expect(discordant(A, B, isFalseAlarm)).toEqual({ onlyA: 0, onlyB: 0, skipped: 0 });
+		expect(discordant(A, B, isWrong)).toEqual({ onlyA: 1, onlyB: 1, skipped: 0 });
+	});
+
+	it("skips and counts items where either side errored", () => {
+		const items = ["x", "y"].map(item);
+		const k = { x: key(true), y: key(true) };
+		const A = score(items, k, [err("x"), no("y")]).results;
+		const B = score(items, k, [no("x"), ev("y", ...FUTURE)]).results;
+		expect(discordant(A, B, isMiss)).toEqual({ onlyA: 1, onlyB: 0, skipped: 1 });
+	});
+});
+
+describe("weekday names", () => {
+	it("matches full names against three-letter keys", () => {
+		const r = score([item("a")], { a: key(true, { day: "2026-10-15", weekdays: ["thu"] }) }, [ev("a", "2026-10-15 21:00", "2026-10-15 23:59", 0, ["Thursday"])]);
+		expect(r.score).toMatchObject({ weekdaysChecked: 1, weekdaysRight: 1 });
 	});
 });

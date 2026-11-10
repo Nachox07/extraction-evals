@@ -1,18 +1,26 @@
 # Report: measuring a prompt change on a production extraction pipeline
 
-**Status: final, 16 October 2026.** The owner answered every open item on 16
+**What changed in November.** The October set below is saturated, so I drew a
+fresh, harder one and had the method attacked in an adversarial review by models
+from two other vendors (not a person). The review found five flaws. All five are
+fixed, and the October numbers stay as published, labelled as the October study.
+The October key was built differently, and how far the November flaws apply to it
+was not measured. Details at the end:
+[November: a fresh held-out set and an adversarial review of the method](#november-a-fresh-held-out-set-and-an-adversarial-review-of-the-method).
+
+**October study. Status: final, 16 October 2026.** The owner answered every open item on 16
 October: 6 disputes and a blind audit of 20 agreements in the main set, and 15
 disputes in the held-out set. All counts below include those answers.
 
 ## Summary
 
-- **Decision.** Prompt `ab` shipped: on 400 images it had 1 miss against the
+- **Decision.** Prompt `narrower` shipped: on 400 images it had 1 miss against the
   baseline's 2 and 5 false alarms against 8, which meets the acceptance rule set
-  before scoring. Prompt `all` was rejected: fewer false alarms, but 5 misses.
-- **Limit.** `ab`'s two rules were written from errors on those same 400 images,
+  before scoring. Prompt `broader` was rejected: fewer false alarms, but 5 misses.
+- **Limit.** `narrower`'s guidance was written from errors on those same 400 images,
   so that result is in-sample.
 - **Held-out.** On 331 images seen after it shipped, both prompts had 1 false
-  alarm. The false-alarm gain did not replicate; `ab` was one miss better.
+  alarm. The false-alarm gain did not replicate; `narrower` was one miss better.
 - **Voting.** Every item was answered twice; a tie counts as "not an event".
 - **Key caveat.** On the held-out set the owner reviewed only the 15 items where
   the reference and production models disagreed, and overturned the reference
@@ -28,15 +36,15 @@ flowchart TD
     B --> D[Production model x2<br/>with 3 prompts]
     C --> E{Acceptance rule:<br/>no more misses,<br/>fewer false alarms}
     D --> E
-    E -->|ab passes| F[ab ships]
+    E -->|narrower passes| F[narrower ships]
     F --> G[331 new images, 14-15 Oct]
     G --> H[Key: reference model x2,<br/>owner reviews 15 disagreements,<br/>no blind audit]
-    G --> I[Production model x2,<br/>ab and without-ab]
+    G --> I[Production model x2,<br/>narrower and without-narrower]
     H --> J[False alarms 1 vs 1:<br/>gain does not replicate]
     I --> J
 ```
 
-## The system
+## The system (October study)
 
 This pipeline powers [Tardeo](https://tardeo.ai): its web agenda and city
 Telegram channels. A service reads images that bars and venues post publicly, decides whether each
@@ -47,17 +55,15 @@ does everything after that, including the rule that drops events already over.
 This report measures one change to the extraction prompt: what it fixed, what
 it broke, and whether the gain held on images seen after it shipped.
 
-## The data
+## The data (October study)
 
 The private runs used public venue posts, not in this repo.
 
 - 400 images seen between 3 and 12 October 2026, from 70 venues in four cities.
 - 300 drawn at random from the 795 usable images of that window: a sample of
   what the pipeline saw in those ten days and nothing wider.
-  Then 100 "hard" items from the rest: quotas for the categories that cause
-  trouble (reposts of another venue's event, opening hours, weekly plans, drink
-  and dish photos, dates far ahead with no year, events already over, giveaways,
-  job calls, cancellations), filled up with items where models disagreed.
+  Then 100 "hard" items from the rest: quotas for hard categories chosen from
+  earlier errors, filled up with items where models disagreed.
 - 91 of the 400 are events under the key. That is the denominator for misses. Images are scored independently, and a venue often posts
   the same plan more than once, so the number of distinct events is somewhat lower and
   was not counted.
@@ -103,26 +109,24 @@ disagreement on the 20 was a different item and its own mistake.
 
 The production model (Claude Sonnet 5.5, medium effort) with three prompts.
 
-The prompt ends with a list of things that are not an event. The three prompts
-differ only in lines added to that list:
+The three prompts differ only in their event-decision guidance. That wording is
+production prompt text and is not published; the variants are described here by
+their measured effects:
 
 - **Baseline**: the prompt as it ran in production before this work.
-- **`ab`** adds two lines. (a) A photo of a dish, drink or menu, or a news
-  piece about a shop, is not an event unless it states a deal or an event.
-  (b) Footage of a night that is happening now or already happened (a crowd
-  dancing, "anoche", a recap) is not an event, unless it announces a future
-  date, says the plan repeats or continues, or sells tickets.
-- **`all`** adds (a), an earlier and stricter wording of (b) without the
-  "continues" and "tickets" exceptions, and (c) plans aimed only at children,
-  families or seniors are not events.
+- **`narrower`** made a small, targeted change aimed at the false alarms seen
+  in the baseline's errors. In-sample it had fewer false alarms and passed the
+  acceptance rule; on fresh images that gain did not replicate.
+- **`broader`** made a wider change in the same direction. It had fewer false alarms
+  but more misses.
 Two runs per item. Read and publish levels are defined in `docs/hit-rule.md`.
 All 400 items:
 
 | Prompt | Misses | False alarms (published) | Caught by policy | Day right* | Items that flipped |
 |---|---|---|---|---|---|
 | Baseline | 2 | 8 | 9 | 83 of 87 | 3 |
-| `ab`: food-photo rule + recap rule (shipped) | 1 | 5 | 9 | 86 of 89 | 2 |
-| `all`: first recap wording + audience rule | 5 | 2 | 8 | 82 of 85 | 0 |
+| `narrower` (shipped) | 1 | 5 | 9 | 86 of 89 | 2 |
+| `broader` | 5 | 2 | 8 | 82 of 85 | 0 |
 
 \* Out of the events found whose key has a day. The key leaves the day empty on
 a few events with no single date (2 of those the baseline found, 1 each for the
@@ -134,13 +138,13 @@ By slice, misses / false alarms:
 | Prompt | Random (300, 51 events) | Hard (100, 40 events) |
 |---|---|---|
 | Baseline | 1 / 3 | 1 / 5 |
-| `ab` | 0 / 3 | 1 / 2 |
-| `all` | 2 / 0 | 3 / 2 |
+| `narrower` | 0 / 3 | 1 / 2 |
+| `broader` | 2 / 0 | 3 / 2 |
 
-`ab` is no worse than the baseline on either slice. Its false-alarm gain is all
+`narrower` is no worse than the baseline on either slice. Its false-alarm gain is all
 in the hard slice. On the random slice it has one miss fewer and the same false alarms.
 
-Pooled counts can hide new errors, so item by item: `ab` fixes 2 misses and 6
+Pooled counts can hide new errors, so item by item: `narrower` fixes 2 misses and 6
 false alarms the baseline makes, and introduces 1 miss and 3 false alarms of its
 own.
 
@@ -150,31 +154,29 @@ wrong end date. On the held-out set it did, once (below).
 
 ## Read this first: the result is in-sample
 
-The two rules in `ab` were written after reading the production model's errors
-on these same 400 images. So the table shows that the rules fix the errors they
-were written for, with fewer errors overall on this set. It does not show
-how much they help on new images. That is what the held-out set below tests, and
+The `narrower` change was written after reading the production model's errors
+on these same 400 images. So the table shows that the change fixes the errors it was
+written for, with fewer errors overall on this set. It does not show
+how much it helps on new images. That is what the held-out set below tests, and
 on it the false-alarm gain does not replicate.
 
 The acceptance rule also looks only at misses and false alarms. Dates are
-reported but do not gate a change: `ab` gets 3 days wrong against the
+reported but do not gate a change: `narrower` gets 3 days wrong against the
 baseline's 4, so it is no worse, but a prompt could pass the rule and still put
 an event on the wrong night.
 
 ## What the numbers say
 
-- **`ab` was shipped.** It meets the acceptance rule on the pooled counts: no
+- **`narrower` was shipped.** It meets the acceptance rule on the pooled counts: no
   more misses than the baseline (1 against 2) and fewer false alarms (5 against 8).
-- **`all` was rejected**, although it has the fewest false alarms. It more than
-  doubled the misses (5 against 2). One of its five is shared with the baseline. The four new ones:
-  two children's shows (dropped by the audience rule), a "last weekend of the
-  season" post (dropped by the first recap wording), and a borderline news post
-  about a charity event, which `ab` also misses. The owner decided family plans
-  stay, and the shipped recap wording says a continuing run is still an event.
+- **`broader` was rejected**, although it has the fewest false alarms. It more than
+  doubled the misses (5 against 2). One of its five is shared with the baseline.
+  Four of the five misses were new; the owner judged them real events that its
+  change wrongly rejected, and one borderline case is also missed by `narrower`.
 - **The publish rule carries real weight.** At the read level the production
   model calls 8 or 9 items "an event" that the key says are not, each with an end
   before the moment it was seen. The rule that drops ended events removes all of
-  them. For `ab`, all 9 were checked against the key's notes: match screenings
+  them. For `narrower`, all 9 were checked against the key's notes: match screenings
   and gigs from the night before, seen the next day. The reference model's own
   answers have 0 such cases, because it rejects them while reading. That gap is
   invisible with only one score. On this set it means the date check is doing
@@ -182,24 +184,24 @@ an event on the wrong night.
 
 ## Held-out check: the false-alarm gain does not replicate
 
-331 images seen on 14 and 15 October, after `ab` shipped, from the same 70
+331 images seen on 14 and 15 October, after `narrower` shipped, from the same 70
 venues. Same models and two runs each, but a lighter review: the owner saw only
 the 15 items where the reference and production models disagreed, with no
-blind audit. `without-ab` is the shipped prompt with the two `ab` lines
+blind audit. `without-narrower` is the shipped prompt with the `narrower` change
 removed.
 
 | Prompt | Misses (read) | Misses (publish) | False alarms | Day right* |
 |---|---|---|---|---|
-| `ab` (shipped) | 1 | 2 | 1 | 120 of 122 |
-| `without-ab` | 3 | 3 | 1 | 119 of 121 |
+| `narrower` (shipped) | 1 | 2 | 1 | 120 of 122 |
+| `without-narrower` | 3 | 3 | 1 | 119 of 121 |
 
 127 of the 331 are events under the key. The misses, item by item:
 
 - Both prompts miss a new bar's opening day.
 - A cinema promotion is a multi-image post whose first image prints no dates. The shipped
   prompt reads it as an event but guesses the publication day as its end, so the
-  publish rule drops it. `without-ab` rejects it outright. Both lose it.
-- A third event only `without-ab` misses.
+  publish rule drops it. `without-narrower` rejects it outright. Both lose it.
+- A third event only `without-narrower` misses.
 
 Both prompts publish the same false alarm: a concert post with no date or time
 on it. So at the publish level the prompts differ on one found event, and the shipped
@@ -215,12 +217,12 @@ the reference model called events. So on new data the key was only as good as
 the owner's review of the disagreements. Without that step the report would have
 said the production model misses 8 events; it misses 2.
 
-On this held-out set `ab` added no miss or false alarm, and its one-item gain is too small
+On this held-out set `narrower` added no miss or false alarm, and its one-item gain is too small
 to call. Shipping them was defensible under the rule as written, and
 the held-out run is what the rule should have required before shipping.
 
-On 16 October production changed one field description in the extraction
-schema (whether the post invites a public comment). It touches no date or event
+On 16 October production changed an unrelated field description in the
+extraction schema. It touches no date or event
 rule, yet rerun on the 331 held-out images it changed 2 answers, both for the
 worse against the key: one more miss (a discount post) and one more false alarm
 (a show announced with no date). Runs of the same code almost never disagree
@@ -250,9 +252,10 @@ to merge on 16 October.
 
 ## What the numbers do not support
 
-- **That `ab` is better by a precise amount, or at all on new images.** The
+- **That `narrower` is better by a precise amount, or at all on new images.** The
   margins are 1 miss and 3 false alarms in-sample, and 1 miss held-out. Run-to-run
-  flips are close to that size: 3 items flipped between the baseline's two runs,
+  flips are close to that size (and, as November showed, flips alone understate
+  the noise: see the per-run ranges at the end): 3 items flipped between the baseline's two runs,
   one of them a real event it found once and missed once. The false-alarm drop is
   all in the hard slice. The decision is a rule on counts, fixed before the
   variants were scored, not a significance claim, and it is in-sample (above).
@@ -267,12 +270,86 @@ to merge on 16 October.
 
 About $69 of API spend recorded for these runs: the main set ~$34 (including
 one pass over the 795-image pool to find the hard items), the held-out set $25,
-$1.75 for the cross-vendor check, and ~$9 for the multi-image check. Per thousand calls, roughly $6–8 for the
-production model on single images, about $13 on multi-image posts with full
-reading, and $15–22 for the reference model.
+$1.75 for the cross-vendor check, and ~$9 for the multi-image check.
 
 ## Reproduce the method
 
 The real images are other people's posts and are not redistributed here. `examples/synthetic/` has 20 invented posters
 with a key, covering the cases in the hit rule, and the same scorer. The prompt
 there is a short stand-in for the same decision, not the production prompt. See the README.
+
+## November: a fresh held-out set and an adversarial review of the method
+
+Written 10 November 2026. Aggregate only; the images, the labels and the
+production prompt stay private.
+
+**Why a new set.** In October both prompts were near-perfect on the held-out
+images, so that set could no longer tell two setups apart. I drew a fresh set of
+260 items from two later weeks. It is deliberately heavy in hard cases, not a
+random sample, so it compares models with each other and says nothing about
+absolute accuracy; the ranking between models may differ on the production mix. Items now include the caption and every image of a
+multi-image post.
+
+**The adversarial review.** I gave the method, the scorer and the key-building steps
+to models from two other vendors (not a person) and asked them to break it. They
+found five flaws. All five are fixed.
+
+1. **The labellers saw the prompt under test.** The key was built by models that
+   had been given the production prompt's rules, so the key repeated the prompt
+   and agreement with it proved little. Labellers now get an independent rubric
+   ([`docs/labelling-rubric.md`](docs/labelling-rubric.md)) built around one
+   question: could a member of the public still attend this at the moment it was
+   seen? They never see the prompt.
+2. **Labellers judged dates against different moments.** One judged "tonight"
+   against the publication time, another against the moment of the scan. That
+   split 13 of the 14 items disputed in the first key. One rubric now fixes the moment: relative
+   words resolve against the publication time to find the calendar day, and
+   attendability is judged at the moment the item was seen.
+3. **Unanimous items with no readable date were thrown out** as disputes. They
+   stay in the key now, with the day left empty and skipped when scoring days.
+4. **Scorer bugs.** The private scorer used for the first November pass read
+   timestamps with no offset in the machine's time zone, treated a date-only end
+   as the start of that day instead of the end, and did not match weekday names
+   across formats. The November numbers here come from the fixed scorer. The
+   public scorer in this repo never had the time-zone or date-only bugs, and its
+   tests lock both; the weekday test was added with this update.
+5. **Two runs were too few.** Each model now gets several runs (5 for the
+   current model, 3 for a cheaper one). I report the range of error counts
+   across runs and a paired exact McNemar test, not a single count.
+
+**The key.** Each item got three blind labels from models of three vendors, with
+the shared rubric, on 256 items. For the last 4, the third vendor's quota ran out
+and a second pass of the first model was used instead. 250 of the 260 items were
+agreed. 14 items had been disputed under the first key; 10 are disputed under the
+rubric. Those 10 are scored apart and never majority-voted into the score.
+
+**Results (250 agreed items).** Per-run ranges:
+
+| Model | Misses | False alarms |
+|---|---|---|
+| Current model (Sonnet), 5 runs | 10 to 12 | 3 to 8 |
+| Cheaper model (Haiku), 3 runs | 16 to 17 | 1 to 2 |
+
+- The cheaper model missed more real plans in every run, and the ranges do not
+  overlap. It also raised fewer false alarms.
+- No detectable difference in total errors (misses plus false alarms): the two
+  models differ on 9 against 10 items, p = 1.00. That does not show they are
+  equal. On misses alone they differ on 4 against 9 items, p = 0.27.
+- The run ranges show run-to-run noise only. The paired test works item by item,
+  and it does not support a difference in misses. It compares majorities of 5 and
+  3 runs while production makes one call, and the items are not fully independent
+  (the same plan can appear more than once).
+- Across 5 runs the current model's false alarms ranged from 3 to 8 and its
+  misses from 10 to 12, and its total error count moved by 5 items. A single
+  count hides that spread, so I report the per-run range next to the flip count
+  (9 of 250 items flipped for the current model).
+- **Decision.** Keep the current model, with the evidence stated as weaker than I
+  first said. The next step is a live shadow comparison, since a set this size
+  cannot settle it.
+
+**Lessons.** Agreement between model labellers is not truth when they share the
+prompt under test. An adversarial review by other models found method
+problems that mattered: the labeller date split alone produced 13 disputed items,
+more than the 4 to 7 item per-run miss gap between the two models. The code for the paired test and the ranges is
+in `src/score.ts` (`mcnemarExact`, `runRange`) and prints misses, false alarms and combined errors from `npm run score`
+when given answers from two or more models.
