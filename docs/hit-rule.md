@@ -8,7 +8,7 @@ number and noting the change here with its date.
 
 In the October study, one image is one item. In the November study, one whole
 post (cover, other images and caption) is one item, with one answer per item;
-see `REPORT.md`. The model gives one answer per image: "an event" or
+see `REPORT.md`. The model gives one answer per item: "an event" or
 "not an event", plus a start, an end and, for a standing weekly plan, the weekdays.
 
 ## Verdict per item

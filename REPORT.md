@@ -17,7 +17,7 @@ disputes in the held-out set. All counts below include those answers.
 - **Decision.** Prompt `narrower` shipped: on 400 images it had 1 miss against the
   baseline's 2 and 5 false alarms against 8, which meets the acceptance rule set
   before scoring. Prompt `broader` was rejected: fewer false alarms, but 5 misses.
-- **Limit.** `narrower`'s two added items were written from errors on those same 400 images,
+- **Limit.** `narrower`'s guidance was written from errors on those same 400 images,
   so that result is in-sample.
 - **Held-out.** On 331 images seen after it shipped, both prompts had 1 false
   alarm. The false-alarm gain did not replicate; `narrower` was one miss better.
@@ -109,15 +109,15 @@ disagreement on the 20 was a different item and its own mistake.
 
 The production model (Claude Sonnet 5.5, medium effort) with three prompts.
 
-The prompt ends with a list of things that are not an event. The three prompts
-differ only in what was added to that list. The wording is production prompt text
-and is not published; they are described here by their measured effects:
+The three prompts differ only in their event-decision guidance. That wording is
+production prompt text and is not published; the variants are described here by
+their measured effects:
 
 - **Baseline**: the prompt as it ran in production before this work.
-- **`narrower`** added two items to the list, aimed at the false alarms seen in
-  the baseline's errors. In-sample it had fewer false alarms and passed the
+- **`narrower`** made a small, targeted change aimed at the false alarms seen
+  in the baseline's errors. In-sample it had fewer false alarms and passed the
   acceptance rule; on fresh images that gain did not replicate.
-- **`broader`** added more items of the same kind. It had fewer false alarms
+- **`broader`** made a wider change in the same direction. It had fewer false alarms
   but more misses.
 Two runs per item. Read and publish levels are defined in `docs/hit-rule.md`.
 All 400 items:
@@ -154,10 +154,10 @@ wrong end date. On the held-out set it did, once (below).
 
 ## Read this first: the result is in-sample
 
-The two added items in `narrower` were written after reading the production model's errors
-on these same 400 images. So the table shows that the added items fix the errors they
-were written for, with fewer errors overall on this set. It does not show
-how much they help on new images. That is what the held-out set below tests, and
+The `narrower` change was written after reading the production model's errors
+on these same 400 images. So the table shows that the change fixes the errors it was
+written for, with fewer errors overall on this set. It does not show
+how much it helps on new images. That is what the held-out set below tests, and
 on it the false-alarm gain does not replicate.
 
 The acceptance rule also looks only at misses and false alarms. Dates are
@@ -172,7 +172,7 @@ an event on the wrong night.
 - **`broader` was rejected**, although it has the fewest false alarms. It more than
   doubled the misses (5 against 2). One of its five is shared with the baseline.
   Four of the five misses were new; the owner judged them real events that its
-  additions wrongly excluded, and one borderline case is also missed by `narrower`.
+  change wrongly rejected, and one borderline case is also missed by `narrower`.
 - **The publish rule carries real weight.** At the read level the production
   model calls 8 or 9 items "an event" that the key says are not, each with an end
   before the moment it was seen. The rule that drops ended events removes all of
@@ -187,7 +187,7 @@ an event on the wrong night.
 331 images seen on 14 and 15 October, after `narrower` shipped, from the same 70
 venues. Same models and two runs each, but a lighter review: the owner saw only
 the 15 items where the reference and production models disagreed, with no
-blind audit. `without-narrower` is the shipped prompt with the two `narrower` additions
+blind audit. `without-narrower` is the shipped prompt with the `narrower` change
 removed.
 
 | Prompt | Misses (read) | Misses (publish) | False alarms | Day right* |
