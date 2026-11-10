@@ -6,7 +6,8 @@ number and noting the change here with its date.
 
 ## Unit
 
-One image is one item. The model gives one answer per image: "an event" or
+In the October study, one image is one item. (The November set also includes
+the caption and every image of a multi-image post; see `REPORT.md`.) The model gives one answer per image: "an event" or
 "not an event", plus a start, an end and, for a standing weekly plan, the weekdays.
 
 ## Verdict per item
@@ -17,7 +18,8 @@ One image is one item. The model gives one answer per image: "an event" or
   column and stay in the denominator, so a model cannot look better by failing.
 - Otherwise the verdict is the strict majority of the answered runs. A tie is
   "not an event", because publishing is the costly side.
-- Items whose runs disagree count towards the flip rate.
+- Items whose runs disagree count towards the flip rate. The flip rate is not the
+  whole noise floor: also report the range of error counts across several runs.
 
 ## Two levels
 
@@ -77,9 +79,10 @@ wrong day still counts as found, and it shows up in the day number.
 - **Policy before the vote.** The publish policy is applied to each run, then the
   runs vote. A run whose end is already past votes "not an event". The flip rate
   is counted on the raw answers, before the policy.
-- **Ambiguous items.** They stay in the key with the owner's answer. If the owner
-  has not answered, the key keeps the reference model's answer, and the item is
-  listed in the report.
+- **Ambiguous items.** In the October study they stay in the key with the owner's
+  answer. If the owner had not answered, the key kept the reference model's answer,
+  and the item was listed in the report. In the November study disputed items are
+  scored apart and never voted into the score.
 
 ## Accepting a change
 
@@ -92,4 +95,6 @@ on all items pooled. The random and hard slices are also reported apart, so a
 change that helps one and hurts the other is visible.
 
 This is a rule on counts, not a statistical claim. With about 90 events in 400
-items, a difference of one or two is within run-to-run flips.
+items, a difference of one or two is within run-to-run flips. For a comparison
+between two models, `npm run score` also prints the per-run range of misses and
+false alarms and a paired exact McNemar test on the majority answers.

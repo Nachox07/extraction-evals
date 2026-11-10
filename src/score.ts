@@ -213,3 +213,56 @@ export function score(items: Item[], key: Record<string, KeyEntry>, answers: Ans
 	}
 	return { score: s, results };
 }
+
+/**
+ * Two-sided exact McNemar test on the discordant pairs of a paired comparison.
+ * onlyA = items A gets wrong and B gets right; onlyB = the reverse. Under "no
+ * difference" each discordant item is a fair coin, so the p-value is the
+ * two-sided exact binomial tail on min(onlyA, onlyB) of n = onlyA + onlyB, capped at 1.
+ */
+export function mcnemarExact(onlyA: number, onlyB: number): number {
+	const n = onlyA + onlyB;
+	if (n === 0) return 1;
+	const k = Math.min(onlyA, onlyB);
+	// log C(n, i) built iteratively, so large n does not overflow or underflow
+	let logC = 0;
+	let tail = 0;
+	for (let i = 0; i <= k; i++) {
+		if (i > 0) logC += Math.log(n - i + 1) - Math.log(i);
+		tail += Math.exp(logC - n * Math.LN2);
+	}
+	return Math.min(1, 2 * tail);
+}
+
+/** Smallest and largest of a count across runs: the run-to-run range, not a single number. */
+export function runRange(values: number[]): { min: number; max: number } {
+	if (values.length === 0) throw new Error("runRange needs at least one value");
+	return { min: Math.min(...values), max: Math.max(...values) };
+}
+
+/** The distinct run numbers present in a set of answers, ascending. */
+export function runsOf(answers: Answer[]): number[] {
+	return [...new Set(answers.map(a => a.run))].sort((x, y) => x - y);
+}
+
+/**
+ * Items that one result gets wrong (per `isError`) and the other gets right.
+ * Pair on the item id; items missing from either side are left out.
+ */
+export function discordant(a: ItemResult[], b: ItemResult[], isError: (r: ItemResult) => boolean): { onlyA: number; onlyB: number } {
+	const other = new Map(b.map(r => [r.id, r]));
+	let onlyA = 0;
+	let onlyB = 0;
+	for (const r of a) {
+		const o = other.get(r.id);
+		if (!o) continue;
+		const ea = isError(r);
+		const eb = isError(o);
+		if (ea && !eb) onlyA++;
+		else if (eb && !ea) onlyB++;
+	}
+	return { onlyA, onlyB };
+}
+
+export const isMiss = (r: ItemResult): boolean => r.outcome === "miss" || r.outcome === "publish-miss";
+export const isFalseAlarm = (r: ItemResult): boolean => r.outcome === "false-alarm";
