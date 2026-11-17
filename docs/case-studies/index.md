@@ -11,7 +11,7 @@ private runs. Each study ends with what was verified and what was not.
 
 | Case study | The change | The lesson |
 |---|---|---|
-| [1. Rule then model](01-host-attribution.md) | A cheap per-account rule flags relayed events; a small model confirms each one | A rule alone made things worse (−5.1 pts); rule plus model, +10.1 pts. The best row was chosen after seeing errors, so it is an upper bound |
+| [1. Rule then model](01-host-attribution.md) | A cheap per-account rule flags relayed events; a small model confirms each one | A rule alone made things worse (−5.1 pts); rule plus model, +10.1 pts. The best row was chosen after seeing errors, so it is in-sample; a held-out re-score is pending |
 | [2. Replaying in both directions](02-replay-both-directions.md) | Split a caption with one act on several dates into one plan per date | A replay of the new rule's output cannot see what a stricter rule stopped doing. Diff old and new |
 | [3. Duplicate detection](03-duplicate-detection.md) | A stricter duplicate rule, and two small-model judges on top | A trade-off shipped switched off; one judge design lost; 322 of 822 duplicates are out of reach of any same-place, same-day matcher |
 

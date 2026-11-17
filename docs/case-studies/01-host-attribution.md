@@ -47,13 +47,16 @@ flowchart LR
 
 ## How it was measured
 
-From a 200-card sample, the 99 cards whose place was elsewhere than the
-posting account's venue were scored. Two blind labellers (Claude and Codex,
-each without the other's answer or any variant's output) said who the host
-was. They agreed on 162 of the 200 cards (81%). The 38 cards
-they disagreed on were excluded rather than settled by me, so the key is the
-cases where two independent labellers agree. Each card is scored right or
-wrong on its own.
+Two terms first. The **host** is the account or venue that runs the event. A
+card's **place is elsewhere** when the place it names is not the posting
+account's own venue.
+
+Two blind labellers (Claude and Codex, each without the other's answer or any
+variant's output) said who the host was on a 200-card sample. They agreed on
+162 of the 200 cards (81%). The 38 cards they disagreed on were excluded. No
+one resolved them, so they are not scored at all. The 99 scored cards are
+agreed cards whose place is elsewhere. Each card is scored right or wrong on
+its own.
 
 | Variant | Right | Change | Wrong reassignments | Relay recall |
 |---|---|---|---|---|
@@ -81,17 +84,25 @@ What the table says:
 These came from an external review of the eval,
 and they limit what the numbers mean.
 
-- **The institution exclusion was chosen after seeing the errors.** That makes
-  the last row in-sample. To limit the damage, the institution list was then
-  frozen from account names only, without looking at outcomes, and a re-score on
-  held-out cards was planned. That re-score has not been run yet, so the +15.2
-  points is an upper bound, not a measured gain.
+- **The last row is an in-sample result.** The institution exclusion was
+  chosen after reading the errors on these same cards. So +15.2 points is not a
+  measured gain, and it is not a ceiling either: on fresh cards the gain could
+  be higher or lower. The institution list was then frozen from account names
+  only, without looking at outcomes. The held-out re-score below tests it.
 - **One wrong reassignment in seven is not nothing.** A wrong "via" line
   credits the wrong venue in public. That is why the change is limited to the credit line and can be switched off.
 - **The key is the agreed cases only.** Excluding 38 disagreements drops the
   hardest cards. The real accuracy on all cards is likely lower for every
   variant, and how much lower was not measured.
 - **99 cards is small.** One card is about one percentage point.
+
+## Held-out re-score
+
+A fresh sample of cards, labelled blind in the same way, is being scored with
+the frozen rule and the frozen institution list. Nothing was changed after
+seeing these cards.
+
+Results pending.
 
 ## Eval inputs must equal production inputs
 

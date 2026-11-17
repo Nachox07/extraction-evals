@@ -19,14 +19,16 @@ missed.
 
 The rule was run over 8,284 stored captions. Very few of them qualify: most
 posts are one event on one date, and the rule only acts when one act is listed
-on several dated times. It flagged 31 to 37 posts, about 0.4% of the log, and
-those posts cover only about nine distinct shows, because a venue repeats the
-same show across several stories.
+on several dated times. The first version flagged 31 posts (26 + 4 + 1 in the
+table below) and the final version flags 30 (29 + 0 + 1), about 0.4% of the
+log. Those posts cover only about nine distinct shows, because a venue repeats
+the same show across several stories.
 
-Each would-split post was checked against the caption and the plans already
-stored for it (by a model labeller, with the wrong cases confirmed in review):
-right split, wrong split, or a split that adds nothing (for example, a second
-"session" that is only the doors time).
+A model labeller checked each would-split post against its caption and the
+plans already stored for it: right split, wrong split, or no gain. "No gain"
+means the split is not wrong but adds a plan nobody needs, for example a second
+"session" that is only the doors time; that call was the labeller's, read
+against the stored plans. The wrong cases were confirmed by two reviewers.
 
 | | Correct splits | Wrong splits | No gain |
 |---|---|---|---|
@@ -86,8 +88,10 @@ flowchart LR
     D --> X[Changed: read each one]
 ```
 
-On the final version: lost 1, gained 0. The one lost post was one of the four
-wrong splits, so losing it is the fix working. Nothing real was lost.
+On the final version: lost 1, gained 0, and every post in each list was read.
+The one lost post was one of the four wrong splits, so losing it is the fix
+working. That is the whole basis for saying nothing real was lost: one lost
+post, which was a wrong case, and no gains.
 
 ## Before and after
 
@@ -114,7 +118,14 @@ two deliberately naive toy rules, not the production ones:
 npm run replay -- examples/replay/captions.json
 ```
 
-On the 8 invented captions in `examples/replay/captions.json`, both toy rules
+If `npm run replay` fails in a sandbox, run the script directly:
+
+```bash
+node --import tsx scripts/replay.ts examples/replay/captions.json
+```
+
+The toy rules are imperfect on purpose, so that the lost/gained diff has
+something to show. On the 8 invented captions in `examples/replay/captions.json`, both toy rules
 split 5. A replay of the new rule alone would show those 5 and nothing else. The
 diff shows that the new rule lost one (the clock-emoji caption) and gained one
 (a "21h" time the old rule could not read). Both toy rules also wrongly split
@@ -124,10 +135,14 @@ reading the splits finds. Code: `src/replay.ts`; tests:
 
 ## Caveats
 
-- **31 split candidates is small.** The rule touches very few posts. A wrong
-  shape that appears once a month may not be in 8,284 captions.
-- **The split labels were not double-blind.** Each split was judged right or
-  wrong by reading it against its caption, not by two blind labellers as in
+- **30 posts is small.** Zero wrong out of 30 still allows an error rate of
+  about 10% at a one-sided 95% bound (the rule of three: 3/30). And the 30 posts
+  cover only about nine shows, so the real sample is smaller than it looks.
+- **The log spans two months.** A wrong shape that appears once a season may
+  not be in 8,284 captions. A replay on later captions is planned.
+- **The split labels were not double-blind.** One model labeller judged each
+  split against its caption and stored plans; only the wrong cases were
+  confirmed by two reviewers. That is weaker than the two blind labellers in
   case study 1.
 - **Captions only.** The rule reads the caption. A poster image that lists
   dates the caption does not is out of scope, and how often that happens was not

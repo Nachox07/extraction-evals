@@ -31,6 +31,17 @@ merges, at an acceptable cost in missed duplicates.
 
 So 822 labelled duplicates in all.
 
+How the pairs were chosen and labelled. A candidate pair is two cards in the
+same city on the same day, or from the same account within three days.
+Candidates were sampled in layers: pairs some rule already merges, pairs that
+share an identifying word, place or account, and a random sample of the rest.
+For the first measurement (1,865 pairs), one model labelled every pair blind,
+from the listing text only and without seeing any rule's answer. A second
+model labelled again every pair where the first contradicted a rule, plus 100
+random agreements. The owner settled the 19 pairs where the two disagreed. The
+later pairs that bring the total to 3,868 are not documented here in the same
+detail.
+
 ## A stricter rule: a trade-off, not a win
 
 | Rule | Wrong merges | Missed duplicates | Right overall |
@@ -43,10 +54,14 @@ is which error you get. The stricter rule removes almost all wrong merges and
 pays for it with 18 more missed duplicates. That is a product choice, not a
 measurement, so the rule shipped with its switch off by default.
 
-On the held-out half of the database pairs, wrong merges went from 17 to 2 and
-missed duplicates from 70 to 43. The drop in wrong merges replicates. The missed
-duplicates moved the other way from the full set (down, not up). That
-difference was not investigated, so the miss side should be read as uncertain.
+The database pairs were split into two halves by a hash of the posting
+account, so one account's cards never sit in both halves. The rule was shaped
+on one half, but it was adjusted while full-set results were visible, so the
+other half is a weaker check than a clean freeze. On that half, wrong merges
+went from 17 to 2 and missed duplicates from 70 to 43. The missed duplicates
+moved the other way from the full set (down, not up). That difference was not
+investigated, so the miss side should be read as uncertain. A re-run on later
+cards, with fresh labels, is planned.
 
 ## Small-model judges on top: a negative result
 
@@ -68,7 +83,8 @@ Database pairs, all of them:
 | + venue-day list judge | 2 | 108 |
 | List judge alone | 0 | 365 |
 
-The list judge cost $0.058 for 294 calls.
+The list judge cost $0.058 for 294 calls. Each judge was run once, with no
+repeats.
 
 The list idea lost. On top of the rule, it recovers 21 duplicates where the
 pairwise judge recovers 39, with the same wrong merges. On its own it never
@@ -87,7 +103,7 @@ flowchart LR
 
 ## The structural finding
 
-322 of the 822 labelled duplicates sit under a different place key or a
+322 of the 822 labelled duplicates (the same 822 as above) sit under a different place key or a
 different day key. Venue A relays Band X's gig at Venue B: one card is filed
 under Venue A, the other under Venue B. A two-day festival posted once per day
 and once as a whole: the days do not line up.
@@ -112,25 +128,38 @@ The method was reviewed externally. Two recommendations:
 
 ## Before and after
 
-| | Before | After (stricter rule) |
-|---|---|---|
-| Venue A posts the same gig on Monday and Thursday | One card | One card |
-| Two different gigs at Venue A on the same night, similar titles | Sometimes one card (wrong merge) | Two cards |
-| Venue A relays Band X at Venue B | Two cards | Two cards (different place keys: out of reach) |
-| Wrong merges on all labelled pairs | 18 | 2 |
-| Missed duplicates on all labelled pairs | 142 | 160 |
+| | Old rule | Stricter rule | Stricter rule + pairwise model judge |
+|---|---|---|---|
+| Venue A posts the same gig on Monday and Thursday | One card | One card | One card |
+| Two different gigs at Venue A on the same night, similar titles | Sometimes one card (wrong merge) | Two cards | Two cards |
+| Venue A relays Band X at Venue B | Two cards | Two cards (different place keys: out of reach) | Two cards (out of reach) |
+| Wrong merges, database pairs (718 duplicates) | 18 | 2 | 2 |
+| Missed duplicates, database pairs | 126 | 129 | 90 |
+| Wrong merges, other sources (104 duplicates) | 0 | 0 | 0 |
+| Missed duplicates, other sources | 16 | 31 | 25 |
+
+The stricter rule alone is a trade: fewer wrong merges, more misses. The
+stricter rule plus the pairwise judge is better on both counts for the
+database pairs: wrong merges 18 → 2, missed duplicates 126 → 90. On the
+smaller other-sources set it still misses more than the old rule (25 against
+16). That is a known weakness.
+
+The relay row stays out of reach for every column. A follow-up measures how
+many of the 322 unreachable duplicates are a different-place problem and how
+many are a different-day problem.
 
 ## Caveats
 
 - **Database pairs come from cards the pipeline made.** They show the
   pipeline's own kind of duplicates; pairs it never produced are not in them.
-- **No run-to-run range is reported for the judges.** A difference of a few
-  pairs between judges may be noise. Treat 90 against 108 as a real gap and
+- **No run-to-run range is reported for the judges.** Each judge was run once.
+  A difference of a few pairs between judges may be noise. Treat 90 against 108 as a real gap and
   smaller ones as unproven.
 - **"Right overall" hides the trade-off.** About 96% for both rules is true and
   useless for the decision.
-- **The held-out miss count disagrees in direction** with the full-set count, as
-  noted above.
+- **The held-out half is not a clean freeze.** The rule was adjusted while
+  full-set results were visible, and its miss count disagrees in direction with
+  the full-set count, as noted above.
 
 ## What was verified, and what was not
 
