@@ -17,14 +17,25 @@ missed.
 
 ## The replay
 
-The rule was run over 8,284 stored captions. Every caption it would split was
-checked by hand against the caption: right split, wrong split, or a split that
-adds nothing (for example, a second "session" that is only the doors time).
+The rule was run over 8,284 stored captions. Very few of them qualify: most
+posts are one event on one date, and the rule only acts when one act is listed
+on several dated times. It flagged 31 to 37 posts, about 0.4% of the log, and
+those posts cover only about nine distinct shows, because a venue repeats the
+same show across several stories.
+
+Each would-split post was checked against the caption and the plans already
+stored for it (by a model labeller, with the wrong cases confirmed in review):
+right split, wrong split, or a split that adds nothing (for example, a second
+"session" that is only the doors time).
 
 | | Correct splits | Wrong splits | No gain |
 |---|---|---|---|
 | First version of the rule | 26 | 4 | 1 |
 | Final version | 29 | 0 | 1 |
+
+The counts are small, and that is the point of the method: a rare pattern is
+exactly where a rule can look fine on a sample and still publish a wrong plan.
+Replaying the whole history is what makes 4 wrong cases out of thousands visible.
 
 The four wrong splits, made synthetic:
 
