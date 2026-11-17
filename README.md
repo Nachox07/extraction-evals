@@ -18,7 +18,8 @@ disagreed changed the production model's count from 8 misses to 2. Full write-up
 Three shorter studies measure changes further down the pipeline, with synthetic
 examples and real aggregate numbers: a rule-then-model check for who hosts a
 plan, replaying history in both directions for a date-splitting rule, and a
-trade-off plus a negative result in duplicate detection. Start at
+trade-off in duplicate detection, with a bench bug that first made one judge
+look worse than it was. Start at
 [`docs/case-studies/index.md`](docs/case-studies/index.md).
 
 ## When a prompt change is proposed

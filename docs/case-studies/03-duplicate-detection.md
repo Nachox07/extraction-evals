@@ -1,7 +1,7 @@
-# Case study 3: a trade-off and a negative result in duplicate detection
+# Case study 3: a trade-off in duplicate detection, and a bench bug
 
-**Status: the stricter rule shipped with its switch off by default. The list
-judge was dropped. November 2026.**
+**Status: the stricter rule shipped with its switch off by default. November
+2026.**
 
 ## The problem
 
@@ -63,7 +63,7 @@ moved the other way from the full set (down, not up). That difference was not
 investigated, so the miss side should be read as uncertain. A re-run on later
 cards, with fresh labels, is planned.
 
-## Small-model judges on top: a negative result
+## Small-model judges on top: a result I nearly got wrong
 
 The stricter rule leaves 129 missed duplicates in the database pairs. Two ways
 of adding a small model were tried.
@@ -74,45 +74,76 @@ of adding a small model were tried.
   as a list, and groups the ones that are the same plan. The idea was that seeing
   the whole day at once gives more context, at fewer calls.
 
-Database pairs, all of them:
+The first run said the list idea lost. It did not. My bench capped each list at
+8 cards, so bigger venue-days were cut into pieces, and duplicates that fell in
+different pieces could never be grouped. With the cap raised to 25, which no
+group exceeds, the numbers are these.
+
+Database pairs (718 duplicates):
 
 | Rule | Wrong merges | Missed duplicates |
 |---|---|---|
 | Stricter rule | 2 | 129 |
 | + pairwise judge | 2 | 90 |
-| + venue-day list judge | 2 | 108 |
-| List judge alone | 0 | 365 |
+| + venue-day list judge | 2 | 94 |
+| List judge alone | 0 | 309 |
 
-The list judge cost $0.058 for 294 calls. Each judge was run once, with no
+Other sources (104 duplicates):
+
+| Rule | Wrong merges | Missed duplicates |
+|---|---|---|
+| Stricter rule | 0 | 31 |
+| + pairwise judge | 0 | 25 |
+| + venue-day list judge | 0 | 28 |
+| List judge alone | 0 | 50 |
+
+On the held-out half of the database pairs, the list judge on top of the rule
+had 2 wrong merges and 40 missed; the pairwise judge had 2 and 42. The
+corrected run cost about $0.064 in total. Each judge was run once, with no
 repeats.
 
-The list idea lost. On top of the rule, it recovers 21 duplicates where the
-pairwise judge recovers 39, with the same wrong merges. On its own it never
-merges wrongly, but it misses more than half the duplicates. It was dropped. A
-negative result is still a result: it stops the same idea being tried again
-next month.
+The honest verdict: the list judge is about as good as the pairwise judge, not
+clearly worse. It made no wrong merges of its own; the 2 in its rows come from
+the rule. The gap in the first run came mostly from my own bench's cap. The
+lesson is one sentence: before concluding an idea lost, check the harness that
+measured it.
 
 ```mermaid
 flowchart LR
     A[822 labelled duplicates] --> S{Same place key<br/>and same day?}
-    S -->|yes: 500| R[Reachable by any<br/>same-place, same-day check]
-    S -->|no: 322| U[Unreachable:<br/>needs better identity]
-    U --> H[Host attribution<br/>see case study 1]
-    U --> E[Explicit sessions<br/>see case study 2]
+    S -->|yes: 624| R[Reachable by a<br/>same-place, same-day check]
+    S -->|no: 198| U[Different place key,<br/>same day]
+    U --> N[About 95: same venue<br/>written differently]
+    U --> H[About 88: promoter or relay<br/>against the venue]
+    U --> L[About 15: labelling errors]
 ```
 
 ## The structural finding
 
-322 of the 822 labelled duplicates (the same 822 as above) sit under a different place key or a
-different day key. Venue A relays Band X's gig at Venue B: one card is filed
-under Venue A, the other under Venue B. A two-day festival posted once per day
-and once as a whole: the days do not line up.
+198 of the 822 labelled duplicates (24%) are out of reach of any check that
+compares cards from the same place on the same day. All 198 have a different
+place key on the same day; none differ by day. An earlier version of this page
+said 322. That count included 124 pairs that shared a place and a day and were
+split only by the same 8-card cap.
 
-No check that compares cards from the same place on the same day can ever see
-those pairs, however smart it is. That caps every matcher above, the judges
-included. The fix is better identity upstream: get the host right (case study
-1) and turn dated sessions into explicit plans (case study 2), so that copies of
-one plan land under the same key in the first place.
+A seeded sample of 40 of the 198, scaled up, splits them roughly like this:
+
+- **About 95: the same venue written two ways.** Venue A on one card, "Sala
+  Venue A" on the other. The fix is place-name normalisation.
+- **About 88: a promoter or relay against the venue.** Venue A relays Band X's
+  gig at Venue B: one card is filed under Venue A, the other under Venue B. The
+  fix is a canonical host identity (case study 1). A fixed alias table is
+  unsafe, because one promoter uses several venues.
+- **About 15: labelling errors.** The pair is not really a duplicate.
+
+These shares come from 40 pairs, so each is good to about ±15 pairs, and the
+sample is concentrated in a few events. Per-session cards (case study 2)
+recover none of the 198, since none of them differ by day.
+
+No same-place, same-day check can see these pairs, however smart it is. That
+caps every matcher above, the judges included. The fix is better identity
+upstream, so that copies of one plan land under the same key in the first
+place.
 
 ## What the external review advised against
 
@@ -144,17 +175,18 @@ database pairs: wrong merges 18 → 2, missed duplicates 126 → 90. On the
 smaller other-sources set it still misses more than the old rule (25 against
 16). That is a known weakness.
 
-The relay row stays out of reach for every column. A follow-up measures how
-many of the 322 unreachable duplicates are a different-place problem and how
-many are a different-day problem.
+The relay row stays out of reach for every column. It is one of the 198
+duplicates under a different place key, described above.
 
 ## Caveats
 
 - **Database pairs come from cards the pipeline made.** They show the
   pipeline's own kind of duplicates; pairs it never produced are not in them.
 - **No run-to-run range is reported for the judges.** Each judge was run once.
-  A difference of a few pairs between judges may be noise. Treat 90 against 108 as a real gap and
-  smaller ones as unproven.
+  A difference of a few pairs between judges may be noise. 90 against 94 is
+  within that, so the two judges are level on this data.
+- **The out-of-reach split is a 40-pair sample.** About ±15 pairs on each
+  share, and the sample is concentrated in a few events.
 - **"Right overall" hides the trade-off.** About 96% for both rules is true and
   useless for the decision.
 - **The held-out half is not a clean freeze.** The rule was adjusted while
@@ -163,8 +195,10 @@ many are a different-day problem.
 
 ## What was verified, and what was not
 
-- **Verified:** the counts in each table, on the labelled pairs; the list
-  judge's cost; the 322 of 822 duplicates under a different place or day key.
+- **Verified:** the counts in each table, on the labelled pairs; the corrected
+  list-judge run with the 25-card cap and its cost; the 198 of 822 duplicates
+  under a different place key on the same day.
 - **Not verified:** how the stricter rule behaves on new posts after it is
-  switched on; whether better identity actually recovers the 322, which is the
-  claim the next work has to test.
+  switched on; the exact split of the 198, which comes from a 40-pair sample;
+  whether place-name normalisation and a canonical host recover them, which is
+  the claim the next work has to test.
