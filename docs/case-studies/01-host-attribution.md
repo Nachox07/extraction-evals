@@ -118,8 +118,8 @@ eligible "elsewhere" cards. 148 were sampled, plus 2 fixtures and 40 controls,
 | Low-home-rate accounts | 234 | 96 |
 
 **Labels.** Two blind labellers, as before. They agreed on 164 of 190 cards
-(86.3%), and on 122 of the 148 elsewhere cards (82.4%). 120 agreed cards were
-scored.
+(86.3%), and on 122 of the 148 elsewhere cards (82.4%). Two of those 122 were
+agreed only as "unsure", so 120 agreed cards were scored.
 
 **Result on the agreed cards:**
 

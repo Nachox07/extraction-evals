@@ -120,7 +120,7 @@ flowchart LR
 
 ## The structural finding
 
-198 of the 822 labelled duplicates (24%) are out of reach of any check that
+198 of the 822 pairs labelled as duplicates (24%) are out of reach of any check that
 compares cards from the same place on the same day. All 198 have a different
 place key on the same day; none differ by day. An earlier version of this page
 said 322. That count included 124 pairs that shared a place and a day and were
@@ -136,8 +136,9 @@ A seeded sample of 40 of the 198, scaled up, splits them roughly like this:
   unsafe, because one promoter uses several venues.
 - **About 15: labelling errors.** The pair is not really a duplicate.
 
-These shares come from 40 pairs, so each is good to about ±15 pairs, and the
-sample is concentrated in a few events. Per-session cards (case study 2)
+These shares come from one seeded sample of 40 pairs, concentrated in a few
+events, so treat them as rough proportions, not precise counts. The sample also
+suggests some of the 198 are labelling errors rather than real duplicates. Per-session cards (case study 2)
 recover none of the 198, since none of them differ by day.
 
 No same-place, same-day check can see these pairs, however smart it is. That
@@ -185,8 +186,8 @@ duplicates under a different place key, described above.
 - **No run-to-run range is reported for the judges.** Each judge was run once.
   A difference of a few pairs between judges may be noise. 90 against 94 is
   within that, so the two judges are level on this data.
-- **The out-of-reach split is a 40-pair sample.** About ±15 pairs on each
-  share, and the sample is concentrated in a few events.
+- **The out-of-reach split is a 40-pair sample.** The shares are rough:
+  one seeded sample, concentrated in a few events.
 - **"Right overall" hides the trade-off.** About 96% for both rules is true and
   useless for the decision.
 - **The held-out half is not a clean freeze.** The rule was adjusted while
