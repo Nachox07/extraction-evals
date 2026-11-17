@@ -3,6 +3,12 @@
 **Status: switched on in production in November 2026, after the measurement
 below. It is behind a switch that can turn it off.**
 
+> **The headline: the gain shrank from +15.2 points to +2.5 on fresh cards.**
+> The first eval scored the rule on cards whose errors had shaped it. Frozen and
+> re-scored on 120 cards nobody had looked at, it gained 2.5 points, inside the
+> noise (95% interval −2.5 to +7.5). Relay recall fell from 18/26 to 6/14. The
+> [held-out re-score](#held-out-re-score) has the details.
+
 ## The problem
 
 A venue often posts about an event that happens somewhere else. Venue A relays
@@ -86,9 +92,9 @@ and they limit what the numbers mean.
 
 - **The last row is an in-sample result.** The institution exclusion was
   chosen after reading the errors on these same cards. So +15.2 points is not a
-  measured gain, and it is not a ceiling either: on fresh cards the gain could
-  be higher or lower. The institution list was then frozen from account names
-  only, without looking at outcomes. The held-out re-score below tests it.
+  measured gain. The institution list was then frozen from account names only,
+  without looking at outcomes, and re-scored on fresh cards below. There the
+  gain was +2.5 points.
 - **One wrong reassignment in seven is not nothing.** A wrong "via" line
   credits the wrong venue in public. That is why the change is limited to the credit line and can be switched off.
 - **The key is the agreed cases only.** Excluding 38 disagreements drops the
@@ -98,11 +104,45 @@ and they limit what the numbers mean.
 
 ## Held-out re-score
 
-A fresh sample of cards, labelled blind in the same way, is being scored with
-the frozen rule and the frozen institution list. Nothing was changed after
-seeing these cards.
+The rule and the institution list were frozen, then scored on cards nobody had
+looked at. Nothing was changed after seeing them.
 
-Results pending.
+**Selection.** A 30-day window, with the earlier 200 cards excluded. It had 286
+eligible "elsewhere" cards. 148 were sampled, plus 2 fixtures and 40 controls,
+190 cards in all. The sample was taken in layers (eligible → sampled):
+
+| Layer | Eligible | Sampled |
+|---|---|---|
+| Children of a split post | 24 | 24 |
+| Fixed-venue accounts | 28 | 28 |
+| Low-home-rate accounts | 234 | 96 |
+
+**Labels.** Two blind labellers, as before. They agreed on 164 of 190 cards
+(86.3%), and on 122 of the 148 elsewhere cards (82.4%). 120 agreed cards were
+scored.
+
+**Result on the agreed cards:**
+
+| | Right | 95% interval (Wilson) |
+|---|---|---|
+| Today | 106/120 = 88.3% | 81.4–92.9% |
+| Frozen rule + model, institutions excluded | 109/120 = 90.8% | 84.3–94.8% |
+
+The difference is +2.5 points. A paired bootstrap gives a 95% interval of −2.5
+to +7.5 points, so it is not significant.
+
+- **The gain sits on fixed-venue accounts:** +13.9 points there. Promoters and
+  town halls are unchanged.
+- **Wrong reassignments:** 3 of 120 (2.5%), against a bar of 2%. None were on
+  promoters or town halls.
+- **Relay recall:** 6 of 14 (42.9%), against 18 of 26 in-sample.
+- **On the cards the labellers disagreed on,** the rule does worse than today
+  under either labeller's answers (−24 and −18 points).
+- **Cost:** about $0.005.
+
+So the in-sample +15.2 came mostly from fixing the errors that had been looked
+at. On fresh cards the gain is small, within the noise, and limited to fixed
+venues. The rule also catches far fewer relays than the first eval suggested.
 
 ## Eval inputs must equal production inputs
 
@@ -137,8 +177,16 @@ Every limit fails towards "card unchanged", which is today's behaviour.
 
 ## What was verified, and what was not
 
-- **Verified:** the counts above, on the 99 scored cards; the model cost for
-  the 81 calls; that the eval and production inputs now match.
-- **Not verified:** the held-out re-score of the institution exclusion; accuracy
-  on the 38 excluded cards; how often relays happen across all accounts, since
-  the sample was drawn from cards with a place elsewhere.
+- **Verified:** the counts above, on the 99 in-sample cards and the 120
+  held-out cards; the model cost for both runs; that the eval and production
+  inputs now match.
+- **Not verified:** accuracy on the disagreement cards beyond the two
+  labellers' views; how often relays happen across all accounts, since both
+  samples were drawn from cards with a place elsewhere; whether the 2.5% wrong
+  reassignment rate, just above the 2% bar, holds on a larger sample.
+
+## The lesson
+
+The method worked: it caught an overfit result before anyone relied on the
+first number. +15.2 points in-sample became +2.5 points on fresh cards, inside
+the noise. Freeze the rule, then score it on cards you have never looked at.
