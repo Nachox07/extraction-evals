@@ -13,6 +13,15 @@ replicate. On the same new images, my review of the 15 items where two models
 disagreed changed the production model's count from 8 misses to 2. Full write-up:
 [`REPORT.md`](REPORT.md), which also covers a November follow-up: a fresh blind-labelled set, and an adversarial review by models from two other vendors that found five flaws in my own method.
 
+## Case studies: after the extraction step
+
+Three shorter studies measure changes further down the pipeline, with synthetic
+examples and real aggregate numbers: a rule-then-model check for who hosts a
+plan, replaying history in both directions for a date-splitting rule, and a
+trade-off in duplicate detection, with a bench bug that first made one judge
+look worse than it was. Start at
+[`docs/case-studies/index.md`](docs/case-studies/index.md).
+
 ## When a prompt change is proposed
 
 A change to the extraction prompt or its schema, from me or from a coding agent

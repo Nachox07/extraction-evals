@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "score": "tsx src/cli.ts",
     "posters": "tsx scripts/make-posters.ts",
-    "run-model": "tsx scripts/run-model.ts"
+    "run-model": "tsx scripts/run-model.ts",
+    "replay": "tsx scripts/replay.ts"
   },
   "engines": {
     "node": ">=22"

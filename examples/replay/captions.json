@@ -1,0 +1,10 @@
+[
+  { "id": "c01", "text": "Band X live at Venue A. Sat 21:00 and Sun 20:00." },
+  { "id": "c02", "text": "Comedy night with Act Y. Fri ⏰ 22:00, Sat ⏰ 22:00." },
+  { "id": "c03", "text": "Quiz every week. Thu 21h and Fri 21h, free entry." },
+  { "id": "c04", "text": "Open mic, Wed 20:30. Doors at 20:00." },
+  { "id": "c05", "text": "Tickets on sale Mon 10:00. Show on Sat 21:00." },
+  { "id": "c06", "text": "Jazz trio, Sat 17:00 and Sun 12:00." },
+  { "id": "c07", "text": "Brunch with DJ Z every Sunday from noon." },
+  { "id": "c08", "text": "Act A on Fri 21:00, Act B on Sat 21:00." }
+]
