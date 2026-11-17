@@ -1,6 +1,7 @@
 # Case study 2: replaying history in both directions
 
-**Status: shipped behind a switch, in shadow. November 2026.**
+**Status: switched on in production in November 2026, after the replay below.
+It is behind a switch that can turn it off.**
 
 ## The problem
 

@@ -1,7 +1,7 @@
 # Case study 1: rule then model, for "who is the host"
 
-**Status: shipped behind a switch, in shadow (it logs what it would change and
-changes nothing). November 2026.**
+**Status: switched on in production in November 2026, after the measurement
+below. It is behind a switch that can turn it off.**
 
 ## The problem
 
@@ -50,7 +50,7 @@ flowchart LR
 From a 200-card sample, the 99 cards whose place was elsewhere than the
 posting account's venue were scored. Two blind labellers (Claude and Codex,
 each without the other's answer or any variant's output) said who the host
-was. They agreed 81.4% of the time on the full 200-card sample. The 38 cards
+was. They agreed on 162 of the 200 cards (81%). The 38 cards
 they disagreed on were excluded rather than settled by me, so the key is the
 cases where two independent labellers agree. Each card is scored right or
 wrong on its own.
@@ -87,7 +87,7 @@ and they limit what the numbers mean.
   held-out cards was planned. That re-score has not been run yet, so the +15.2
   points is an upper bound, not a measured gain.
 - **One wrong reassignment in seven is not nothing.** A wrong "via" line
-  credits the wrong venue in public. That is why the feature runs in shadow first.
+  credits the wrong venue in public. That is why the change is limited to the credit line and can be switched off.
 - **The key is the agreed cases only.** Excluding 38 disagreements drops the
   hardest cards. The real accuracy on all cards is likely lower for every
   variant, and how much lower was not measured.
